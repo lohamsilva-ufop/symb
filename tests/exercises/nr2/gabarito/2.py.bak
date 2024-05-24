@@ -1,0 +1,6 @@
+#2) Construa um programa que leia dois valores numéricos inteiros e efetue a adição; caso o resultado seja maior que 10, apresentá-lo. 
+
+numero = input("Insira um numero: ")
+
+if numero > 20:
+    print numero

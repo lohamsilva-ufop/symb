@@ -1,0 +1,1 @@
+("8.3" ta6nt ("3d2ec445e9b5781d1ec912316f669aa7dc70c8d4" . "57140c074fdd4203a52ff9055022bbe2791a08c2") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt") (collects #"symb" #"especificacao" #"controller.rkt") (collects #"symb" #"especificacao" #"parser.rkt") (collects #"symb" #"especificacao" #"syntax.rkt"))
