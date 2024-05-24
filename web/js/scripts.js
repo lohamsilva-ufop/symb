@@ -1,3 +1,5 @@
+
+
 function Corrigir(){
  
 var nexec = document.getElementById("txtqtde").value;

@@ -10,6 +10,26 @@
         <link rel="icon" type="web/image/x-icon" href="web/assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="web/css/styles.css" rel="stylesheet" />
+		
+		<script  type="text/javascript">
+		
+                function Corrigir(){
+ 
+                      var nexec = document.getElementById("txtqtde").value;
+                      var gabarito = document.getElementById("txtgabarito").value;
+                      var exalunos = document.getElementById("txtexalunos").value;
+
+                      var texto = "#lang symb/especificacao/conf \\n" +
+                       "quantidade-execucoes: " +nexec + "; \\n" +
+                       "gabarito: "+ gabarito + ";  \\n "+
+                        "dir-aluno-exercicios: "+exalunos + "; ";
+
+                      var FileSaver = require('file-saver');
+                      var blob = new Blob([texto], {type: "text/plain;charset=utf-8"});
+                      FileSaver.saveAs(blob, "especificacao.rkt");
+ 
+ }
+       </script>		
     </head>
     <body>
         <div class="d-flex" id="wrapper">
@@ -57,7 +77,9 @@
 					<br>
 					Pasta com os exercícios dos alunos: <input type="file" webkitdirectory mozdirectory id="txtexalunos" /><br />
 					<br>
-					<center> <input type="submit" value="Corrigir"/> </center>
+					
+					
+					<center> <input type="submit" onclick="Corrigir()" value="Corrigir"/> </center>
 					</form>
 					</div>
                 </div>
@@ -66,8 +88,6 @@
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
-		<script type="text/javascript" src="web/js/FileSaver.js"></script>
-        <script src="web/js/scripts.js"></script>
 		
     </body>
 </html>
