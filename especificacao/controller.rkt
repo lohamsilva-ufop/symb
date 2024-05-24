@@ -2,7 +2,7 @@
 
 (require "syntax.rkt"
          "../python/parse-python/lex+yacc.rkt"
-         "../python/temp-interp.rkt"
+         "../interp.rkt"
          "../z3/gen-econds/gen-script.rkt"
          "../z3/gen-econds/definitions.rkt")
 
@@ -33,14 +33,14 @@
 
 (define (control-execute-students nexec path-exercise table-inputs)
   (let ([ast  (build-ast-from-file path-exercise)])
-      (temp-python-interp ast nexec table-inputs table-inputs '())))
+      (imp-interp ast nexec table-inputs table-inputs '())))
 
 (define (execute-gab nexec path-gabarito)
   (let*
       ([ast  (build-ast-from-file path-gabarito)]
        [get-tree-econds (get-eifs ast)]
        [table-inputs (execute-gen-script-econds ast get-tree-econds "" nexec)])
-      (temp-python-interp ast nexec table-inputs table-inputs '())))
+      (imp-interp ast nexec table-inputs table-inputs '())))
 
 (define (execution-controller cfg)
   (match cfg

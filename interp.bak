@@ -66,13 +66,13 @@
                             [newlist (cdr (cdr new-triple))])
                             (eval-stmts nenv blks newtable newlist)))]))
 
-(define (temp-python-interp prog nexec table-inputs copy-table-inputs list-out)
+(define (imp-interp prog nexec table-inputs copy-table-inputs list-out)
   (if (equal? nexec 0)
   (cons copy-table-inputs list-out)
   (let*
        ([triple (eval-stmts (make-immutable-hash) prog table-inputs list-out)]
         [new-table (car (cdr triple))]
         [new-list (cdr (cdr triple))])
-       (temp-python-interp prog ( - (length (car (hash-values table-inputs))) 1)  new-table copy-table-inputs new-list))))
+       (imp-interp prog ( - (length (car (hash-values table-inputs))) 1)  new-table copy-table-inputs new-list))))
  
-(provide temp-python-interp eval-expr)
+(provide imp-interp eval-expr)
