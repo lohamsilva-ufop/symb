@@ -6,6 +6,9 @@
          "../z3/gen-econds/gen-script.rkt"
          "../z3/gen-econds/definitions.rkt")
 
+(define (consolidade-table table-inputs)
+  (make-immutable-hash (hash-map table-inputs (lambda (k v) (cons k (reverse v))))))
+
 (define (correction list-out-gabarito list-out-ex-alunos)
   (if (equal? list-out-gabarito list-out-ex-alunos)
       (displayln "O exercício está correto. ")
@@ -23,24 +26,27 @@
         (display "Arquivo: ")
         (displayln f)
         (displayln "Saídas do gabarito: ")
-        (displayln list-outs-gab)
+        (displayln (reverse list-outs-gab))
         (displayln "Saídas após a execução do aluno com as entradas do gabarito: ")
-        (displayln (cdr pair-ex-student))
+        (displayln (reverse (cdr pair-ex-student)))
         (display "Correção: ")
         (correction list-outs-gab (cdr pair-ex-student))
         (displayln "===========================================")
         (percorre-path-student path rest nexc (car pair-ex-student) list-outs-gab))))]))
 
 (define (control-execute-students nexec path-exercise table-inputs)
-  (let ([ast  (build-ast-from-file path-exercise)])
-      (imp-interp ast nexec table-inputs table-inputs '())))
+  (let ([ast  (build-ast-from-file path-exercise)]
+        [iteration (length (car (hash-values table-inputs)))])
+      (imp-interp ast iteration table-inputs table-inputs '())))
 
 (define (execute-gab nexec path-gabarito)
   (let*
       ([ast  (build-ast-from-file path-gabarito)]
        [get-tree-econds (get-eifs ast)]
-       [table-inputs (execute-gen-script-econds ast get-tree-econds "" nexec)])
-      (imp-interp ast nexec table-inputs table-inputs '())))
+       [table (execute-gen-script-econds ast get-tree-econds "" nexec (make-immutable-hash))]
+       [table-inputs (consolidade-table table)]
+       [iteration (length (car (hash-values table-inputs)))])
+      (imp-interp ast iteration table-inputs table-inputs '())))
 
 (define (execution-controller cfg)
   (match cfg
@@ -53,6 +59,10 @@
         [table-inputs-gab (car pair-gab)]
         [list-outs-gab (cdr pair-gab)]
         [list-files-path (directory-list path-alunos)])
-        (percorre-path-student path-alunos list-files-path nexec table-inputs-gab list-outs-gab))]))
+        (begin
+        (display "Tabela de entradas geradas pelo gabarito: ")
+        (displayln table-inputs-gab)
+        (displayln "")
+        (percorre-path-student path-alunos list-files-path nexec table-inputs-gab list-outs-gab)))]))
        
 (provide execution-controller)

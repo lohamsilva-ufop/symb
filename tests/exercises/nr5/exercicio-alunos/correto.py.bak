@@ -7,8 +7,6 @@ numero2 = input("Insira um valor para o segundo numero: ")
 adicao = numero1 + numero2
 
 if adicao > 20 :
-    adiciona8 = adicao + 8
-    print adiciona8
+    print adicao + 8
 else:
-    subtrai5 = adicao - 5
-    print subtrai5    
+    print adicao - 5    

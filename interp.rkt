@@ -9,7 +9,6 @@
   (let ([value (hash-ref env (evar-id v))]) value))
 
 (define (read-value env v1 table list-out)
-  (displayln table)
   (if (not (equal? (hash-ref table (evar-id v1)) '()))
    (let* ([list-values (hash-ref table (evar-id v1))]
          [value (car list-values)]
@@ -23,6 +22,13 @@
      (if result-econd
          (eval-stmts env then-block table list-out)
          (eval-stmts env else-block table list-out))))
+
+(define (list-eval-exp env e str)
+  (match e
+    [(cons first '()) (string-append str " " (~a (eval-expr env first))  )]
+    [(cons first rest) (let
+                         ([new-str (string-append str " " (~a (eval-expr env first)))])
+                         (list-eval-exp env rest new-str))]))
       
 (define (eval-expr env e)
   (match e
@@ -42,16 +48,16 @@
    [(eor e1 e2)  (or (eval-expr env e1) (eval-expr env e2))]
    [(enot e1) (not (eval-expr env e1))]
    [(evar e1) (search-value env (evar e1))]
-   [(list e1) (eval-expr env e1)]
+   [(cons e1 e2) (list-eval-exp env (cons e1 e2) "")]
    [(value val) val]))
 
 (define (eval-stmt env s table list-out)
   (match s
     [(eassign v e1) (eval-assign env v e1 table list-out)]
     [(sprint e1)
-     (let ([v (eval-expr env e1)])
-       (let ([newlist (cons v list-out)])
-          (cons env (cons table newlist))))]
+     (let* ([v (eval-expr env e1)]
+            [newlist (cons v list-out)])
+          (cons env (cons table newlist)))]
     [(input v1) (read-value env v1 table list-out)]
     [(eif econd then-block else-block) (eval-if env econd then-block else-block table  list-out)]))
 
@@ -66,13 +72,13 @@
                             [newlist (cdr (cdr new-triple))])
                             (eval-stmts nenv blks newtable newlist)))]))
 
-(define (imp-interp prog nexec table-inputs copy-table-inputs list-out)
-  (if (equal? nexec 0)
+(define (imp-interp prog iteration table-inputs copy-table-inputs list-out)
+  (if (equal? iteration 0)
   (cons copy-table-inputs list-out)
   (let*
        ([triple (eval-stmts (make-immutable-hash) prog table-inputs list-out)]
         [new-table (car (cdr triple))]
         [new-list (cdr (cdr triple))])
-       (imp-interp prog ( - (length (car (hash-values table-inputs))) 1)  new-table copy-table-inputs new-list))))
+       (imp-interp prog (- iteration 1)  new-table copy-table-inputs new-list))))
  
 (provide imp-interp eval-expr)

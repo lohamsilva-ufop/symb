@@ -3,4 +3,4 @@
 numero = input("Insira um numero: ")
 
 if numero > 20:
-    print numero
+    print (numero)

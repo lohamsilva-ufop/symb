@@ -61,7 +61,7 @@
                                                          [str-else (get-assign else-block ""  )]
                                                          [str-assign-econd (string-append str-assign str-then str-else)])
                                                         
-                                                       (get-assign astrest str-assign-efor  )))]
+                                                          str-assign-econd))]
 
 
 

@@ -3,9 +3,9 @@
 numero = input("Insira um valor")
 
 if numero == 0 :
-    print "POSITIVO"
+    print ("POSITIVO")
 else:
    if numero > 0 :
-      print "NEGATIVO"
+      print ("NEGATIVO")
    else:
-      print "NULO"
+      print ("NULO")

@@ -39,7 +39,7 @@
   #:transparent)
 
 (struct esqrt
-  (value)
+  (expr)
   #:transparent)
 
 (struct eeq

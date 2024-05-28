@@ -5,7 +5,6 @@ B = input("Digite o valor B: ")
 
 
 if A > B:
-   print "A é maior que B"
+   print ("A é maior que B")
 else:
-   print "B é maior que A"
-    
+   print ("B é maior que A")

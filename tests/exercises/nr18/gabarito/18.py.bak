@@ -1,15 +1,9 @@
-#17) Escreva um programa que leia um número e informe se ele é divisível por 10, por 5 ou por 2 ou se não é divisível por nenhum deles. 
+#18) Construa um programa que indique se um número digitado está compreendido entre 20 e 90 ou não (20 e 90 não estão na faixa de valores). 
 
 numero = input("Digite um numero: ")
 
-if numero%10 == 0 :
-   print "Divisivel por 10"
-
-elif numero%5 == 0 :
-   print "Divisivel por 5"
-   
-elif numero%2 == 0 :
-   print "Divisivel por 2"
-
+if numero >= 20 and numero <= 90 :
+   print "Está entre 20 e 90"
 else: 
-   print "Não é divisivel por 10, 5 ou 2"
+   print "Não está entre 20 e 90"
+

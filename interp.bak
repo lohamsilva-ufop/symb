@@ -1,6 +1,6 @@
 #lang racket
 
-(require "../syntax.rkt")
+(require "syntax.rkt")
 (define (eval-assign env v e table  list-out)
    (let ([nenv (hash-set env (evar-id v) (eval-expr env e))])
    (cons nenv (cons table  list-out))))

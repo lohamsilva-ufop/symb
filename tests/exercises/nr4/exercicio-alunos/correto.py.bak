@@ -1,9 +1,11 @@
-#3) Construa um programa que determine (imprima) se um dado número N inteiro (recebido através do teclado) é PAR ou ÍMPAR. 
+#4) Escreva um programa para determinar se um dado número N (recebido através do teclado) é POSITIVO, NEGATIVO ou NULO.
 
 numero = input("Insira um valor")
-resto = numero % 2
 
-if resto == 0 :
-    print "O numero é par"
+if numero > 0 :
+    print "POSITIVO"
 else:
-    print "O numero é impar"
+   if numero < 0 :
+      print "NEGATIVO"
+   else:
+      print "NULO"

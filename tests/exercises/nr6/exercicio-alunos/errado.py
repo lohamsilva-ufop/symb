@@ -1,0 +1,11 @@
+#6) Escreva um programa que leia um número e imprima a raiz quadrada do número caso ele seja positivo ou 
+#igual a zero e o quadrado do número caso ele seja negativo. 
+
+import math
+
+numero = input("Digite um numero: ")
+
+if numero <= 0:
+    print (math.sqrt(numero))
+else:
+   print (numero*numero)

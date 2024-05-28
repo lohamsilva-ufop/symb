@@ -4,13 +4,14 @@
 numero = input("Digite um numero: ")
 
 if numero == 5:
-   print "Igual a 5"
+   print ("Igual a 5")
 else:
-   print "Não é igual a 5"
+   print ("Não é igual a 5")
    
-print "Algo"
+print ("Algo")
+numero2 = input("Digite outro numero: ")
    
-if numero == 400:
-   print "Igual a 400"
+if numero2 == 400:
+   print ("Igual a 400")
 else: 
-   print "Não é igual a 400"
+   print ("Não é igual a 400")

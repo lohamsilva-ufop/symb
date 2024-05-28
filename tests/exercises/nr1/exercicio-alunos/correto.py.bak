@@ -1,0 +1,6 @@
+#1) Escreva um programa que leia um número e o imprima caso ele seja maior que 20. 
+
+numero = input("Insira um numero: ")
+
+if numero > 20:
+    print ("O numero é" , numero , "Depois disso")

@@ -8,9 +8,11 @@
     ['() '()]
     [ (tree-econds x y z) (gen-text x y z ast nexec)]))
   
-(define (execute-gen-script-econds ast florest str nexec)
+(define (execute-gen-script-econds ast florest str nexec table)
   (match florest
-    ['() str]
-    [(cons node rest) (gen-script-eifs node ast nexec)]))
+    ['() table]
+    [(cons node rest) (let
+                        ([new-table (gen-script-eifs node ast nexec)])
+                        (execute-gen-script-econds ast rest str nexec new-table))]))
 
 (provide (all-defined-out))

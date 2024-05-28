@@ -5,4 +5,4 @@ v2 = input("Insira o segundo numero: ")
 soma = v1 + v2
 
 if soma > 10:
-    print soma
+    print (soma)
