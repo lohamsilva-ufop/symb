@@ -4,6 +4,10 @@
   (evar type value)
   #:transparent)
 
+(struct define-arg-fun
+  (evar arg value)
+  #:transparent)
+
 (struct sat-unsat
   (value)
   #:transparent)

@@ -43,7 +43,9 @@
     [(cons (eassign v e1) astrest) (get-assign astrest (build-str-assign v e1 str-assign )  )]
     [(cons (sprint e1) astrest) (get-assign astrest str-assign  )]
     [(cons (read-v v1) astrest) (get-assign astrest str-assign  )]
-    [(cons (eif econd then-block else-block) astrest)
+    [(cons (eif econd then-block else-block) astrest) (get-assign astrest str-assign  )]
+    [(eif econd then-block else-block) str-assign]
+    #;[(cons (eif econd then-block else-block) astrest)
 
      (begin
                                                         (let*
@@ -53,7 +55,7 @@
                                                         
                                                        (get-assign astrest str-assign-econd  )))]
 
-     [(eif econd then-block else-block)
+     #;[(eif econd then-block else-block)
 
      (begin
                                                         (let*

@@ -6,10 +6,10 @@ C = input("Digite o valor C: ")
 D = input("Digite o valor D: ")
 
 if A < B and A > C and A > D :
-   print A
-elif B > A and B < C and B > D :
-   print B
-elif C > A and C < B and C > D :
-   print C
+    print (A)
+elif B < A and B > C and B > D :
+    print (B)
+elif C > A and C > B and C > D :
+    print (C)
 else:
-    print D
+    print (D)

@@ -4,6 +4,7 @@
          "../python/parse-python/lex+yacc.rkt"
          "../interp.rkt"
          "../z3/gen-econds/gen-script.rkt"
+         "../z3/gen-econds/new-script.rkt"
          "../z3/gen-econds/definitions.rkt")
 
 (define (consolidade-table table-inputs)
@@ -16,7 +17,9 @@
 
 (define (percorre-path-student path list-files-path nexc table-inputs list-outs-gab)
   (match list-files-path
-    ['() (displayln "Correção Finalizada. ")]
+    ['() (begin
+           (displayln "Correção Finalizada. ")
+            table-inputs)]
     [(cons f rest)
      (if (string-suffix? (~a f) ".bak")
          (percorre-path-student path rest nexc table-inputs list-outs-gab)  
@@ -52,17 +55,17 @@
   (match cfg
    [(config numero-execucoes gabarito dir-aluno-exercicios)
        (let*
-       ([nexec (value-value numero-execucoes)]
-        [path-gab (value-value gabarito)]
-        [path-alunos (value-value dir-aluno-exercicios)]
-        [pair-gab (execute-gab nexec path-gab)]
-        [table-inputs-gab (car pair-gab)]
-        [list-outs-gab (cdr pair-gab)]
-        [list-files-path (directory-list path-alunos)])
-        (begin
-        (display "Tabela de entradas geradas pelo gabarito: ")
-        (displayln table-inputs-gab)
-        (displayln "")
-        (percorre-path-student path-alunos list-files-path nexec table-inputs-gab list-outs-gab)))]))
+           ([nexec (value-value numero-execucoes)]
+            [path-gab (value-value gabarito)]
+            [path-alunos (value-value dir-aluno-exercicios)]
+            [pair-gab (execute-gab nexec path-gab)]
+            [table-inputs-gab (car pair-gab)]
+            [list-outs-gab (cdr pair-gab)]
+            [list-files-path (directory-list path-alunos)])
+              (begin
+              (display "Tabela de entradas geradas pelo gabarito: ")
+              (displayln table-inputs-gab)
+              (displayln "")
+              (percorre-path-student path-alunos list-files-path nexec table-inputs-gab list-outs-gab)))]))
        
 (provide execution-controller)

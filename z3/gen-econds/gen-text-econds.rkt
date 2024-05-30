@@ -3,12 +3,13 @@
          "definitions.rkt"
           "../gen-atr/gen-atr-script.rkt"
           "../out/interp.rkt"
-          "../out/parser.rkt")
+          "../out/parser.rkt"
+          "gen-text-div-or-mod.rkt")
 
 (require racket/date)
 
 (define (create-script-file text-script)
-   (let*  ([path-file (string->path (string-append "../../../z3/scripts/econd/script_" (~a (random (date->seconds (current-date)))) ".z3"))]
+   (let*  ([path-file (string->path (string-append "script_" (~a (random (date->seconds (current-date)))) ".z3"))]
            [out (open-output-file path-file
                                   #:mode 'text
                                   #:exists 'replace)])
@@ -52,7 +53,6 @@
    [(evar e1) (~a e1)]
    [(value val) (~a val)]))
 
-
 (define (check-econd node )
   (match node
     [(lt e1 e2)   (string-append "(< " (~a (eval-expr-gen-econds e1)) "  " (~a (eval-expr-gen-econds e2)) ")")]
@@ -69,12 +69,12 @@
   (match tree
     ['() str-cond]
     [ (list (tree-econds x y z)) (let*
-                            ([new-str-x (string-append str-cond "(not " (check-econd x ) ") ")]
+                            ([new-str-x (string-append str-cond "(not " (check-econd x ) ") " (verify-node-mod-div x))]
                              [new-str-y (gen-econds-node-false y new-str-x )]
                              [new-str-z (gen-econds-node-false z new-str-y )])
                               new-str-z)]
     [ (tree-econds x y z) (let*
-                            ([new-str-x (string-append str-cond "(not " (check-econd x ) ") ")]
+                            ([new-str-x (string-append str-cond "(not " (check-econd x ) ") " (verify-node-mod-div x))]
                              [new-str-y (gen-econds-node-false y new-str-x )]
                              [new-str-z (gen-econds-node-false z new-str-y )])
                               new-str-z)]))
@@ -83,12 +83,12 @@
   (match tree
     ['() str-cond]
     [ (list (tree-econds x y z)) (let*
-                            ([new-str-x (string-append str-cond (check-econd x ))]
+                            ([new-str-x (string-append str-cond (check-econd x) (verify-node-mod-div x))]
                              [new-str-y (gen-econds-node y new-str-x )]
                              [new-str-z (gen-econds-node z new-str-y )])
                               new-str-z)]
     [ (tree-econds x y z) (let*
-                            ([new-str-x (string-append str-cond (check-econd x ))]
+                            ([new-str-x (string-append str-cond (check-econd x) (verify-node-mod-div x))]
                              [new-str-y (gen-econds-node y new-str-x )]
                              [new-str-z (gen-econds-node z new-str-y )])
                               new-str-z)]))
@@ -220,10 +220,12 @@
      [str-assign (get-assign ast "")]
      [str-script-true (string-append
                          str-assign
-                        " (assert (and " node-x " " node-y "))")]
+                        " (assert (and " node-x " " node-y "))"
+                          (verify-node-mod-div x))]
      [str-script-false (string-append
                          str-assign
-                        " (assert (not " node-x "))")]
+                        " (assert (not " node-x "))"
+                          (verify-node-mod-div x))]
       [hasht1 (build-text-script str-script-true ast nexec (make-immutable-hash))]
       [hasht2 (build-text-script str-script-false ast nexec hasht1)])
       hasht2))
@@ -235,10 +237,12 @@
      [str-assign (get-assign ast "")]
      [str-script-true (string-append
                          str-assign
-                        " (assert " node ")")]
+                        " (assert " node ")"
+                        (verify-node-mod-div x))]
      [str-script-false (string-append
                          str-assign
-                        " (assert (not " node "))")]
+                        " (assert (not " node "))"
+                        (verify-node-mod-div x))]
      [hasht1 (build-text-script str-script-true ast nexec (make-immutable-hash))]
      [hasht2 (build-text-script str-script-false ast nexec hasht1)])
      hasht2))

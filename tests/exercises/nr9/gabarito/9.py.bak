@@ -1,0 +1,9 @@
+#9) Escreva um programa para determinar se um número A é divisível por um outro número B. Esses valores devem ser fornecidos pelo usuário.  
+
+A = input("Digite o valor A: ")
+B = input("Digite o valor B: ")
+
+if A/B == 0:
+   print ("A é divisivel por B")
+else:
+   print ("A não é divisivel por B")

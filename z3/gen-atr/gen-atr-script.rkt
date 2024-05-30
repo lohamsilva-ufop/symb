@@ -1,7 +1,8 @@
 #lang racket
 
 (require "../../syntax.rkt"
-         "../../interp.rkt")
+         "../../interp.rkt"
+         "../gen-econds/gen-text-div-or-mod.rkt")
 
 (require racket/date)
 
@@ -33,7 +34,8 @@
   (string-append
    str-assign
    (string-append "(declare-const " (evar-id v) " Int) ")
-  "(assert (= " (evar-id v) " " (eval-expr-gen-atr e1) "))"))
+  "(assert (= " (evar-id v) " " (eval-expr-gen-atr e1) "))"
+  (expr-div-node e1)))
 
 
 (define (get-assign ast str-assign )

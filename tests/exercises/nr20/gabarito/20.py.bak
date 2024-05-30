@@ -10,5 +10,3 @@ if numero1 > numero2 :
 else:
    print ("Raiz quadrada do maior numero:" , math.sqrt(numero2))
    print ("Quadrado do menor numero:" , numero1*numero1)
-
- 

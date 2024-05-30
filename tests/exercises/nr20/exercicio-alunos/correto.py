@@ -1,6 +1,8 @@
 #20) Criar um programa que leia dois números e imprimir o quadrado do menor número e
 #raiz quadrada do maior número, se for possível. 
 
+import math
+
 numero1 = input("Digite o primeiro numero: ")
 numero2 = input("Digite o segundo numero: ")
 

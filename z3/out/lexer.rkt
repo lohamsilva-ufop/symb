@@ -12,6 +12,8 @@
    SUBTRACT
    LPAREN
    RPAREN
+   EXC
+   DIV
    DEFINE-FUN
    INT
    BOOLEAN))
@@ -23,6 +25,8 @@
     (return-without-pos (next-token input-port))]
    ["("  (token-LPAREN)]
    [")"  (token-RPAREN)]
+   ["!"  (token-EXC)]
+   ["/"  (token-EXC)]
    [#\- (token-SUBTRACT)]
    ["sat" (token-SAT)]
    ["unsat" (token-UNSAT)]
