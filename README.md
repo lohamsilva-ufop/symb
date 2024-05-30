@@ -59,12 +59,12 @@ A árvore de sintaxe é então submetida a função `get-eifs`, que retorna uma 
 
 ```
 IF (x>3) THEN 
-print (“maior) 
+   print (“maior) 
 ELSE 
-IF (x = 3) THEN
-print (“Igual”)
-ELSE
-print (“menor)
+   IF (x = 3) THEN
+      print (“Igual”)
+   ELSE
+     print (“menor)
 ```
 
 Estrutura: `(tree-econds (expressão-princial) (expressões THEN) (expressões-ELSE))`
