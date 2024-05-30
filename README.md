@@ -29,7 +29,8 @@ A técnica de Execução Simbólica visa explorar múltiplos fluxos de execuçã
 2) Instale a versão mais recente do Java. Siga as orientações de instalação para Linux. [Link de instalação](https://www.java.com/pt-BR/download/manual.jsp)
 3) Instale a versão mais recente do Racket. [Link de instalação:](https://download.racket-lang.org/) ou utilize o comando: 'apt-get install racket'
 4) Baixe o Z3 Theorem Prover: [Link de instalação](https://github.com/Z3Prover/z3/releases). Siga as orientações para a instalação, ou utilize o comando: 'apt-get install z3'
-5) E por fim, clique no executável Symb.jar para executar o programa (Não esqueça de verificar as permissões do arquivo).
+5) Abra o terminal, vá até o diretório raiz Symb. Digite: `raco pkg install`
+6) E por fim, clique no executável Symb.jar para executar o programa (Não esqueça de verificar as permissões do arquivo).
 
 ### C) Mac OS  
 Em breve!
