@@ -1,0 +1,1 @@
+export PATH=${PATH}usrlibSunJava2-1.4.2jrebin
