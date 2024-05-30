@@ -1,0 +1,1 @@
+(declare-const peso Int) (declare-const altura Int) (declare-const quadrado Int) (assert (= quadrado ( * altura altura)))(declare-const imc Int) (assert (= imc ( / peso quadrado)))(assert (not ( = quadrado 0)))  (assert (and (not (< imc  20)) (not (and ( >= imc 20)  ( < imc 25)))(not (and ( >= imc 25)  ( < imc 30)))(and ( >= imc 30)  ( < imc 40))))(check-sat) (get-model)

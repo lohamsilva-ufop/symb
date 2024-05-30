@@ -13,6 +13,7 @@
    LPAREN
    RPAREN
    EXC
+   DIV
    DEFINE-FUN
    INT
    BOOLEAN))
@@ -25,6 +26,7 @@
    ["("  (token-LPAREN)]
    [")"  (token-RPAREN)]
    ["!"  (token-EXC)]
+   ["/"  (token-EXC)]
    [#\- (token-SUBTRACT)]
    ["sat" (token-SAT)]
    ["unsat" (token-UNSAT)]

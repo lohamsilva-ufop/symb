@@ -84,6 +84,8 @@
    [(:: alphabetic (:* (:+ alphabetic numeric)))
     (token-IDENTIFIER lexeme)]
    [(:: numeric (:* numeric))
+    (token-NUMBER (string->number lexeme))]
+   [(:: numeric (:* numeric) "." (:: numeric (:* numeric)))
     (token-NUMBER (string->number lexeme))]))
 
 (provide next-token value-tokens var-tokens syntax-tokens)

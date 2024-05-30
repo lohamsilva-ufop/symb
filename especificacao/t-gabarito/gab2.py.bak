@@ -1,6 +1,0 @@
-numero = input("Digite um numero: ")
-
-if numero == 5:
-   print "Igual a 5"
-else: 
-   print "Não está no escopo"

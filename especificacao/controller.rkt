@@ -4,7 +4,6 @@
          "../python/parse-python/lex+yacc.rkt"
          "../interp.rkt"
          "../z3/gen-econds/gen-script.rkt"
-         "../z3/gen-econds/new-script.rkt"
          "../z3/gen-econds/definitions.rkt")
 
 (define (consolidade-table table-inputs)

@@ -1,11 +1,7 @@
 #lang racket
 
 (struct define-const-vars
-  (evar type value)
-  #:transparent)
-
-(struct define-arg-fun
-  (evar arg value)
+  (evar arg type value)
   #:transparent)
 
 (struct sat-unsat
@@ -21,6 +17,10 @@
   #:transparent)
 
 (struct type
+  (value)
+  #:transparent)
+
+(struct error
   (value)
   #:transparent)
 

@@ -1,10 +1,7 @@
 #lang racket
 (require racket/date)
 (require "syntax.rkt"
-         "parser.rkt"
-         "../simbolic-table.rkt"
-         "../gen-script/script-generator.rkt"
-         "../gen-atr/gen-atr-script.rkt")
+         "parser.rkt")
 
 (define (create-script-file text-script)
    (let*  ([path-file (string->path (string-append "script_" (~a (random (date->seconds (current-date)))) ".z3"))]
@@ -32,7 +29,6 @@
      "(check-sat) "
      "(get-model)")))
 
-
 (define (build-script table-in-list str)
   (match table-in-list
     ['() str]
@@ -40,7 +36,6 @@
                            ([replace (string-replace str "(check-sat) (get-model)" "")]
                             [new-str (string-append replace "(assert (not (= " (~a (car first)) " " (~a (car (cdr first))) "))) ")])
                              (build-script rest new-str))]))
-
 
 (define (repeat-script text-script nexec symb-table-input-gab)
   (if (equal? nexec 0)
@@ -51,31 +46,6 @@
          [new-symb-table-input-gab (eval-second-stmts-prog (parse (open-input-string res)) text-script symb-table-input-gab)])
   (repeat-script new-str (- nexec 1) new-symb-table-input-gab))))
 
-
-#;(define (update-value-table script iteration ast)
-  (let* ([table-in-list (hash->list temp-table)]
-         [new-str (build-script table-in-list "")]
-         [res (build-text-script new-str ast)])
-   (repeat-script res ast (- iteration 2))))
-
-;pegou o valor, chamou update-value-table
-
-#;(define (insert-value-table ev v)
-  (begin
-   ;não sei por que existe temp-table, mas a variavel e valor são enviados para insert-sim 
-  (hash-set!  temp-table (evar-id ev) (value-value v))
-  (insert-simbolic-table (evar-id ev) (value-value v))
-  ;tabela inserindo só um valor até aqui
-  ))
-
-
-#;(define (eval-prog blk ast)
-  (match blk
-    ['() '()]
-    [(cons s blks) (begin
-                     (eval-stmt s)
-                     (eval-prog blks ast))]))
-
 (define (eval-second-stmts-prog blk script symb-table-input-gab)
   (match blk
     ['()  symb-table-input-gab]
@@ -83,22 +53,27 @@
                      ([new-symb-table-input-gab (eval-stmt s symb-table-input-gab)])
                      (eval-second-stmts-prog blks script new-symb-table-input-gab))]))
 
-
 (define (insert-value-table ev v symb-table-input-gab)
   (if (hash-has-key? symb-table-input-gab (evar-id ev))
       
       (let* ([old-value (hash-ref symb-table-input-gab (evar-id ev))]
              [new-hash (hash-set symb-table-input-gab (evar-id ev) (cons (value-value v) old-value))])
               new-hash)
-
       (let ([new-hash (hash-set symb-table-input-gab (evar-id ev) (list (value-value v)))])
             new-hash)))
 
 (define (eval-stmt s symb-table-input-gab)
   (match s
-    [(define-const-vars ev t v) (insert-value-table ev v symb-table-input-gab)]
-    [(define-arg-fun ev arg v) symb-table-input-gab]
-    [(sat-unsat v) symb-table-input-gab]))
+    [(define-const-vars ev arg t v) (if (equal? arg '())
+                                        (insert-value-table ev v symb-table-input-gab)
+                                         symb-table-input-gab)]
+    [(sat-unsat v)  (if (equal? v 'unsat)
+                        (begin
+                          (displayln "Não foi possivel satisfazer a expressão! Tente novamente. ")
+                          (displayln "")
+                          symb-table-input-gab)
+                          symb-table-input-gab)]
+    [(error e) symb-table-input-gab]))
 
 (define (eval-stmts prog text-script ast nexec symb-table-input-gab)
   (match prog

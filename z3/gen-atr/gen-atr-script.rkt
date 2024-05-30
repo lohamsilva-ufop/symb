@@ -25,6 +25,7 @@
    [(evar e1) (~a e1)]
    [(value val) (~a val)]))
 
+
 (define (build-str-input v str-assign )
   (string-append
    str-assign
@@ -36,7 +37,6 @@
    (string-append "(declare-const " (evar-id v) " Int) ")
   "(assert (= " (evar-id v) " " (eval-expr-gen-atr e1) "))"
   (expr-div-node e1)))
-
 
 (define (get-assign ast str-assign )
    (match ast
