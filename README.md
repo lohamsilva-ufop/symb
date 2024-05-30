@@ -1,5 +1,11 @@
-# symb
-### Repositório de teste da ferramenta de Correção Automática de Exercícios utilizando Execução Simbólica 
+# Symb
+### Ferramenta de Correção Automática de Exercícios utilizando Execução Simbólica (Teste)
+
+A ferramenta automática de exercício de programação introdutória denominada **Symb** tem o objetivo de auxiliar os docentes na avaliação, classificação e gerenciamento de exercícios de programação de computadores. 
+
+O diferencial da ferramenta, é que não se faz necessária a inserção de casos de teste manualmente por parte dos professores, pois utiliza-se a abordagem de correção através da análise estática de um programa de gabarito do professor para a geração de casos de teste automatizados e a correção utilizando Execução Simbólica. 
+
+A técnica de Execução Simbólica visa explorar múltiplos fluxos de execução de um programa, que pode auxiliar na verificação de propriedades a serem atestadas na correção de exercícios. Com a ferramenta, o professor somente indica a localização de seu gabarito, o diretório que contém os exercícios dos alunos e a quantidade de execuções, pretendo-se simplificar o trabalho do docente para elaborar exercícios e feedback rápido sobre suas possíveis soluções para exercícios propostos. 
 
 ## Instalação
 ### A) Windows  
@@ -24,19 +30,25 @@
    
 
 ## Como os módulos do programa funcionam?
-
 ### A) O início de tudo: O arquivo especificacao/controller.rkt
 
-Ao executar o arquivo de especificação, a função execution-controller (especificacao/controller.rkt) é chamada (no reader);
+Ao executar o arquivo de especificação, a função `execution-controller` (especificacao/controller.rkt) é chamada (no reader);
+
 A função recebe como parâmetro a árvore de sintaxe da especificação: quantidade de execuções, caminho do gabarito e caminho da pasta com os exercícios dos alunos;
 Ao capturar esses parâmetros, a função execute-gab é chamada;
+
 Ao ser executada, a função retorna um par: a tabela hash de entrada geradas pelo Z3 do gabarito (table-inputs-gab) e a lista de saídas após a execução dessas entradas (list-outs-gab);
-Após isso, função percorre-path-student é chamada;
-A função recebe como parâmetro, o caminho do diretório dos exercícios dos alunos, a lista com os nomes dos arquivos do diretório (retornada pela função directory-list), a tabela hash com as entradas e a lista de saída do gabarito;
-A função percorre-path-student  tem duas funções principais: percorrer a pasta com os exercícios dos alunos, selecionando cada arquivo recursivamente e invocar a função para a correção (correction). Para cada arquivo selecionado, a função control-execute-students é chamada;
-A função control-execute-students ao ser executada, retorna a lista de saídas da execução do programa (com base nas entradas geradas pelo gabarito). Invoca-se a função correction, para que a correção possa ser realizada;
-A função correction recebe como parâmetro: a lista de saídas do gabarito e a lista de saída do exercício do aluno. Compara-se ambas as listas, para verificar se são iguais. Se sim, o exercício está correto. Senão, o exercício está incorreto;
-A função percorre-path-student continua recursivamente o processo, até que a correção finaliza. 
+Após isso, função `percorre-path-student` é chamada;
+
+A função recebe como parâmetro, o caminho do diretório dos exercícios dos alunos, a lista com os nomes dos arquivos do diretório (retornada pela função `directory-list`), a tabela hash com as entradas e a lista de saída do gabarito;
+
+A função `percorre-path-student`  tem duas funções principais: percorrer a pasta com os exercícios dos alunos, selecionando cada arquivo recursivamente e invocar a função para a correção (correction). Para cada arquivo selecionado, a função `control-execute-students` é chamada;
+
+A função `control-execute-students` ao ser executada, retorna a lista de saídas da execução do programa (com base nas entradas geradas pelo gabarito). Invoca-se a função `correction`, para que a correção possa ser realizada;
+
+A função `correction` recebe como parâmetro: a lista de saídas do gabarito e a lista de saída do exercício do aluno. Compara-se ambas as listas, para verificar se são iguais. Se sim, o exercício está correto. Senão, o exercício está incorreto;
+
+A função `percorre-path-student` continua recursivamente o processo, até que a correção finaliza. 
 
 ### B) Para o procedimento de execução do gabarito:
 No arquivo especificacao/controller.rkt, a função execute-gab recebe como parâmetro: o número de execuções informado pelo usuário e a localização do arquivo.
