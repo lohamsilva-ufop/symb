@@ -1,9 +1,31 @@
 # symb
-Repositório de teste da ferramenta de Correção Automática de Exercícios utilizando Execução Simbólica 
+### Repositório de teste da ferramenta de Correção Automática de Exercícios utilizando Execução Simbólica 
 
-Instalação
+## Instalação
+### A) Windows  
+1) Baixe este projeto em sua máquina, e descompacte em algum diretório de sua preferência; 
+2) Instale a versão mais recente do Java. [Link de instalação](https://www.java.com/pt-BR/download/manual.jsp)
+3) Instale a versão mais recente do Racket. [Link de instalação:](https://download.racket-lang.org/)
+4) Baixe o Z3 Theorem Prover: [Link de instalação](https://github.com/Z3Prover/z3/releases). Em "Assets" procure pela versão do Windows 32 ou 64 bits, baixe e descompate a pasta em C:/Arquivos de programas;
+5) Pressione Windows + R e digite: sysdm. cpl;
+6) Na caixa de diálogo, clique em "Avançado" -> "Variáveis de Ambiente" -> Em "Variáveis do Sistema", Clique em "Novo".
+7) Digite como: "nome da variável:" JAVA_TOOL_OPTIONS - Digite como "Valor da Variável:" -Dfile.encoding=UTF8 -> Clique em OK;
+8) Na janela anterior, procure pela variável Path e clique em "Editar" -> "Novo" -> "Procurar";
+9) Selecione a pasta raiz de instalação do Racket na pasta "C:/Arquivos de Programas/Racket";
+10) Clique novamente em "Novo" -> "Procurar";
+11) Selecione a pasta descompactada com os arquivos de instalação do Z3. Obrigatoriamente, selecione até a pasta /bin. 
+12) Clique em "Ok" -> "Ok" -> "Ok";
+13) Abra a pasta do projeto symb e clique em windows-bin;
+14) E por fim, clique no executável Symb.jar para executar o programa.
 
-A) O início de tudo: O arquivo especificacao/controller.rkt
+### B) Linux
+
+### C) Mac OS  
+   
+
+## Como os módulos do programa funcionam?
+
+### A) O início de tudo: O arquivo especificacao/controller.rkt
 
 Ao executar o arquivo de especificação, a função execution-controller (especificacao/controller.rkt) é chamada (no reader);
 A função recebe como parâmetro a árvore de sintaxe da especificação: quantidade de execuções, caminho do gabarito e caminho da pasta com os exercícios dos alunos;
@@ -16,7 +38,7 @@ A função control-execute-students ao ser executada, retorna a lista de saídas
 A função correction recebe como parâmetro: a lista de saídas do gabarito e a lista de saída do exercício do aluno. Compara-se ambas as listas, para verificar se são iguais. Se sim, o exercício está correto. Senão, o exercício está incorreto;
 A função percorre-path-student continua recursivamente o processo, até que a correção finaliza. 
 
-B) Para o procedimento de execução do gabarito:
+### B) Para o procedimento de execução do gabarito:
 No arquivo especificacao/controller.rkt, a função execute-gab recebe como parâmetro: o número de execuções informado pelo usuário e a localização do arquivo.
 
 A árvore de sintaxe do arquivo de gabarito é construído, por meio da função build-ast-from-file, presente no parser da linguagem Python (/python/parse-python/lex+yacc.rkt). O parser converte a linguagem Python para uma linguagem intermediária, denominada IMP. 
