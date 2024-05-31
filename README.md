@@ -34,10 +34,19 @@ A técnica de Execução Simbólica visa explorar múltiplos fluxos de execuçã
 
 ### C) Mac OS  
 Em breve!
-   
+
+## Organização do projeto
+1) O projeto está divido em quatro módulos: raiz, especificacao, z3 e outz3
+2) Em seu diretório raiz, os arquivos interp.rkt, lexer.rkt, parser.rkt, syntax.rkt, reader.rkt e main.rkt, fazem parte da linguagem symb, que interpretará o programa.
+3) O arquivo Symb.java é o executável da ferramenta;
+4) O arquivo windows-bin.bat importa o módulo symb no racket para instalação via Windows
+5) O diretório especificacao possui os arquivos referente ao modulo de especificacao;
+6) O diretório z3 possui os arquivos referente ao modulo de z3 (geração de scripts);
+7) O diretório z3/outz3 possui os arquivos referente ao modulo de outz3;
+8) O diretório tests possui 21 exercícios de programação introdutória já testados. Possuem a localização do gabarito, um exercício correto e outro incorreto.
 
 ## Como os módulos do programa funcionam?
-### A) O início de tudo: O arquivo especificacao/controller.rkt
+### A) O início de tudo: O módulo especificacao - arquivo especificacao/controller.rkt
 
 Ao executar o arquivo de especificação, a função `execution-controller` (especificacao/controller.rkt) é chamada (no reader);
 
