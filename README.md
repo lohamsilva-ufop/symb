@@ -27,13 +27,15 @@ A técnica de Execução Simbólica visa explorar múltiplos fluxos de execuçã
 ### B) Linux
 1) Baixe este projeto em sua máquina, e descompacte em algum diretório de sua preferência. Altere as permissões para leitura, execução e gravação; 
 2) Instale a versão mais recente do Java. Siga as orientações de instalação para Linux. [Link de instalação](https://www.java.com/pt-BR/download/manual.jsp)
-3) Instale a versão mais recente do Racket. [Link de instalação:](https://download.racket-lang.org/) ou utilize o comando: 'apt-get install racket'
+3) Instale a versão mais recente do Racket (8.3 ou superior). [Link de instalação:](https://download.racket-lang.org/) ou utilize o comando: 'apt-get install racket'
 4) Baixe o Z3 Theorem Prover: [Link de instalação](https://github.com/Z3Prover/z3/releases). Siga as orientações para a instalação, ou utilize o comando: 'apt-get install z3'
-5) Abra o terminal, vá até o diretório raiz Symb. Digite: `raco pkg install`
+5) Abra o terminal, vá até o diretório raiz do projeto, onde você descompactou (passo 1). Digite: `raco pkg install`
 6) E por fim, clique no executável Symb.jar para executar o programa (Não esqueça de verificar as permissões do arquivo).
 
 ### C) Mac OS  
 Em breve!
+
+## Limitações
 
 ## Organização do projeto
 1) O projeto está divido em quatro módulos: raiz, especificacao, z3 e outz3
@@ -250,4 +252,6 @@ Em `eval-stmts`, identificado o comando `sprint`, que captura a saída gerada na
 A função executa o programa recursivamente até que  `iteration` seja igual a 0. Se for, retorna-se para `execution-controler` (especificacao/controller.rkt), um par: a tabela hash com as entradas e as saídas obtidas, ambas do gabarito.
 
 De posse do par (tabela de entradas x lista de saídas) do gabarito, `execution-controller` evoca a função `percorre-path-student`, na qual seus objetivos são descritos no item A) 7.
+
+## Extensões para outras linguagens
 
