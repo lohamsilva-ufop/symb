@@ -27,17 +27,28 @@ A técnica de Execução Simbólica visa explorar múltiplos fluxos de execuçã
 ### B) Linux
 1) Baixe este projeto em sua máquina, e descompacte em algum diretório de sua preferência. Altere as permissões para leitura, execução e gravação; 
 2) Instale a versão mais recente do Java. Siga as orientações de instalação para Linux. [Link de instalação](https://www.java.com/pt-BR/download/manual.jsp)
-3) Instale a versão mais recente do Racket. [Link de instalação:](https://download.racket-lang.org/) ou utilize o comando: 'apt-get install racket'
+3) Instale a versão mais recente do Racket (8.3 ou superior). [Link de instalação:](https://download.racket-lang.org/) ou utilize o comando: 'apt-get install racket'
 4) Baixe o Z3 Theorem Prover: [Link de instalação](https://github.com/Z3Prover/z3/releases). Siga as orientações para a instalação, ou utilize o comando: 'apt-get install z3'
-5) Abra o terminal, vá até o diretório raiz Symb. Digite: `raco pkg install`
+5) Abra o terminal, vá até o diretório raiz do projeto, onde você descompactou (passo 1). Digite: `raco pkg install`
 6) E por fim, clique no executável Symb.jar para executar o programa (Não esqueça de verificar as permissões do arquivo).
 
 ### C) Mac OS  
 Em breve!
-   
+
+## Limitações
+
+## Organização do projeto
+1) O projeto está divido em quatro módulos: raiz, especificacao, z3 e outz3
+2) Em seu diretório raiz, os arquivos interp.rkt, lexer.rkt, parser.rkt, syntax.rkt, reader.rkt e main.rkt, fazem parte da linguagem symb, que interpretará o programa.
+3) O arquivo Symb.java é o executável da ferramenta;
+4) O arquivo windows-bin.bat importa o módulo symb no racket para instalação via Windows
+5) O diretório especificacao possui os arquivos referente ao modulo de especificacao;
+6) O diretório z3 possui os arquivos referente ao modulo de z3 (geração de scripts);
+7) O diretório z3/outz3 possui os arquivos referente ao modulo de outz3;
+8) O diretório tests possui 21 exercícios de programação introdutória já testados. Possuem a localização do gabarito, um exercício correto e outro incorreto.
 
 ## Como os módulos do programa funcionam?
-### A) O início de tudo: O arquivo especificacao/controller.rkt
+### A) O início de tudo: O módulo especificacao - arquivo especificacao/controller.rkt
 
 Ao executar o arquivo de especificação, a função `execution-controller` (especificacao/controller.rkt) é chamada (no reader);
 
@@ -149,5 +160,98 @@ RETORNA:  `(< x 3) (> x 3)`
 **build-text-script:** recebe como parâmetro as strings geradas (expressões lógicas e atribuições) e constroi todo o script Z3. Evoca a função execute-script que executa o script em seguida;
 
 Cada script gerado evoca na função `execute-script` a função `outz3-interp` do arquivo (/z3/out/interp.rkt), para capturar os valores gerados, após a satisfação da propriedade do resultado da execução dos scripts gerados. 
-[res (with-output-to-string (lambda () (system cmd)))]
+`[res (with-output-to-string (lambda () (system cmd)))]`
+
+Em seguida, como dito anteriormente, a função `outz3-interp` é evocada, com a saída do console obtida (res), apresentada pela função `get-model` do Z3. O módulo outz3 possui um parsing, que retorna uma árvore de sintaxe de saída adequada para os próximos passos. 
+
+**O módulo outz3**
+**/z3/out/interp.rkt**
+interp.rkt tem três objetivos principais:
+Interpretar o resultado da saída (get-model) Z3 obtida pelo console. Essa saída possui o valor gerado pelas variáveis, se a expressão for satisfazível. Como dito anteriormente, o módulo out possui um parsing que converte a string do console, para uma árvore de sintaxe com as estruturas adequadas para capturar as entradas geradas pelas variáveis;
+Inserir os valores gerados em uma tabela hash com a associação: variável . (lista de entradas);
+Dependendo do número de execuções, evocar função que gera novos scripts com valores de entrada diferentes dos já existentes;
+
+Para isso, a função `eval-stmts`, tem o objetivo de recursivamente acessar cada statment do programa. Evoca a função `eval-stmt` que analisa a *statment* repassada e ao encontrar a estrutura `declare-const-vars` evoca a função que insere na tabela hash, os valores de entrada da variável obtido na execução do script.
+
+Ao retornar a tabela hash com os valores inseridos, a função `eval-stmts` verifica se o número de execuções é igual a 1. Se for, a tabela hash com as entradas é retornada para o `controller`. Senão, a função `repeat-script` é chamada, para gerar novos scripts com valores de entrada diferentes dos já existentes.
+
+A função `repeat-script` de posse da tabela hash, gera um novo script com o valor obtido anteriormente. Exemplo:
+
+```
+#hash (numero . (4))
+```
+
+```
+(declare-const numero Int)
+(assert (> numero 3))
+(assert (not (= numero 4))
+(check-sat)
+(get-model)
+```
+
+Resultado obtido:
+```
+sat
+
+(
+
+  (define-fun numero () Int
+
+    5)
+
+)
+
+```
+
+O valor obtido pelo script é capturado, e é gerada uma nova tabela hash com a lista de todos os valores obtidos:
+
+```
+#hash (numero . (5 4))
+```
+
+Dessa forma, o número de execuções é decrementado, para que recursivamente gere novos scripts, até que o seu valor seja 0. Exemplo:
+
+```
+(declare-const numero Int)
+(assert (> numero 3))
+(assert (not (= numero 4))
+(assert (not (= numero 5))
+(check-sat)
+(get-model)
+```
+
+Resultado obtido:
+```
+sat
+
+(
+
+  (define-fun numero () Int
+
+    6)
+
+)
+
+```
+
+Novo hash obtido: 
+```
+#hash (numero . (6 5 4))
+```
+
+Quando o número de execuções é igual 0, a tabela hash com todos os valores obtidos é retornada para `execute-gab` (especificacao/controller.rkt)
+
+De posse da tabela hash gerada, a função  `execute-gab` evoca o interpretador da linguagem intermediária que executará o gabarito com as entradas. A função `imp-interp` presente na pasta raiz do projeto, recebe como parâmetro a tabela de entradas. A variável iteration guarda o número de execuções que o gabarito deve ter. Esse número está associado à quantidade de valores gerados na tabela hash, pois para cada valor, um caminho do programa é explorado (Execução simbólica).
+
+Enquanto a função `eval-stmts` recursivamente acessar cada statment do programa, `eval-stmt` evoca as funções necessárias para interpretar cada *statment* para a execução do programa. É dessa forma que as entradas da tabela hash serão utilizadas, para gerar as saídas do programa.
+
+Em `eval-stmts`, identificado o comando `input`, evoca-se a função `read-value` que substitui a entrada de valores pelo teclado do usuário, pelas entradas da tabela hash. Dessa forma, a variável no enviroment (env) possui o valor obtido na tabela hash. Como nessa tabela, há a lista de entradas, cada entrada é computada recursivamente, como dito anteriormente. E cada uma delas, gera uma saída.
+
+Em `eval-stmts`, identificado o comando `sprint`, que captura a saída gerada na execução do programa. Todas as saídas são inseridas em uma lista.
+
+A função executa o programa recursivamente até que  `iteration` seja igual a 0. Se for, retorna-se para `execution-controler` (especificacao/controller.rkt), um par: a tabela hash com as entradas e as saídas obtidas, ambas do gabarito.
+
+De posse do par (tabela de entradas x lista de saídas) do gabarito, `execution-controller` evoca a função `percorre-path-student`, na qual seus objetivos são descritos no item A) 7.
+
+## Extensões para outras linguagens
 
