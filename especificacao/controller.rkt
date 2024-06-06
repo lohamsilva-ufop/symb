@@ -39,6 +39,7 @@
 (define (control-execute-students nexec path-exercise table-inputs)
   (let ([ast  (build-ast-from-file path-exercise)]
         [iteration (length (car (hash-values table-inputs)))])
+     
       (imp-interp ast iteration table-inputs table-inputs '())))
 
 (define (execute-gab nexec path-gabarito)

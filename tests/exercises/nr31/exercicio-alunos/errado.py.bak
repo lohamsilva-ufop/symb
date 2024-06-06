@@ -1,0 +1,22 @@
+#30)Dado três valores, A, B e C, construa um programa para verificar se estes valores
+#podem ser valores dos lados de um triângulo, e se for, se é um triangulo escaleno, um
+#triangulo eqüilátero ou um triangulo isósceles. 
+
+
+A = input("Digite o primeiro lado do triangulo: ")
+B = input("Digite o segundo lado do triangulo: ")
+C = input("Digite o terceiro lado do triangulo: ")
+
+if A + B + C == 180 :
+    print ("Oi, esta ouvindo? ")
+    if A + B == 30 :
+        print ("Igual a 30")
+    elif A + B == 50:
+       print ("Igual a 50")
+    elif A + B == 70:
+       print ("Igual a 70")
+    else :
+        if A + B == 90 :
+            print ("Igual a 90")
+else :
+    print ("Não está no escopo")

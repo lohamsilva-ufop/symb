@@ -13,12 +13,14 @@
    [(mult e1 e2) (string-append "( * " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(divv e1 e2) (string-append "( / " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(esqrt e1)   (string-append "(Sqrt (" (eval-expr-gen-atr e1) ")")]
+   [(epow e1 e2) (string-append "( ^ " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(mod e1 e2)  (string-append "( mod " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
-   [(lt e1 e2)   (string-append "( > " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
-   [(bt e1 e2)   (string-append "( < " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
+   [(lt e1 e2)   (string-append "( < " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
+   [(bt e1 e2)   (string-append "( > " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(lte e1 e2)  (string-append "( <= " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(bte e1 e2)  (string-append "( >= " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(eeq e1 e2)  (string-append "( = " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
+   [(diff e1 e2) (string-append "(distinct " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(eand e1 e2) (string-append "( and " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(eor e1 e2)  (string-append "( or " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(enot e1) (string-append "( not " (eval-expr-gen-atr e1) ")")]
@@ -46,31 +48,6 @@
     [(cons (sprint e1) astrest) (get-assign astrest str-assign  )]
     [(cons (read-v v1) astrest) (get-assign astrest str-assign  )]
     [(cons (eif econd then-block else-block) astrest) (get-assign astrest str-assign  )]
-    [(eif econd then-block else-block) str-assign]
-    #;[(cons (eif econd then-block else-block) astrest)
-
-     (begin
-                                                        (let*
-                                                        ([str-then (get-assign then-block ""  )]
-                                                         [str-else (get-assign else-block ""  )]
-                                                         [str-assign-econd (string-append str-assign str-then str-else)])
-                                                        
-                                                       (get-assign astrest str-assign-econd  )))]
-
-     #;[(eif econd then-block else-block)
-
-     (begin
-                                                        (let*
-                                                        ([str-then (get-assign then-block ""  )]
-                                                         [str-else (get-assign else-block ""  )]
-                                                         [str-assign-econd (string-append str-assign str-then str-else)])
-                                                        
-                                                          str-assign-econd))]
-
-
-
-
-     ))
-
+    [(eif econd then-block else-block) str-assign]))
 
 (provide (all-defined-out))

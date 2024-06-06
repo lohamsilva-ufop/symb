@@ -42,6 +42,10 @@
   (expr)
   #:transparent)
 
+(struct epow
+  (left right)
+  #:transparent)
+
 (struct eeq
   (left right)
   #:transparent)

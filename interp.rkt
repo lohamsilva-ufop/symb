@@ -37,6 +37,7 @@
    [(mult e1 e2) (* (eval-expr env e1) (eval-expr env e2))]
    [(divv e1 e2) (/ (eval-expr env e1) (eval-expr env e2))]
    [(esqrt e1) (sqrt (eval-expr env e1))]
+   [(epow e1 e2)  (expt (eval-expr env e1) (eval-expr env e2))]
    [(mod e1 e2)  (remainder (eval-expr env e1) (eval-expr env e2))]
    [(lt e1 e2)   (< (eval-expr env e1) (eval-expr env e2))]
    [(bt e1 e2)   (> (eval-expr env e1) (eval-expr env e2))]
@@ -63,8 +64,7 @@
 
 (define (eval-stmts env blk table list-out)
   (match blk
-    ['() (cons env (cons table list-out))]
-    [(eif econd then-block else-block) (eval-stmt env (eif econd then-block else-block) table list-out) ]
+    ['() (cons env (cons table list-out))]                                   
     [(cons s blks) (begin
                      (let* ([new-triple (eval-stmt env s table list-out)]
                             [nenv   (car new-triple)]

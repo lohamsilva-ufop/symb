@@ -10,6 +10,7 @@
   (match e
     [(divv e1 e2) (check-evar-value e2)]
     [(mod e1 e2)  (check-evar-value e2)]
+    [(epow e1 e2) ""]
     [(add e1 e2)  ""]
     [(minus e1 e2) ""]
     [(mult e1 e2) ""]

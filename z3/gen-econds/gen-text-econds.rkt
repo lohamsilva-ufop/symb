@@ -41,12 +41,14 @@
    [(mult e1 e2) (string-append "( * " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(divv e1 e2) (string-append "( / " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(esqrt e1)   (string-append "(Sqrt (" (eval-expr-gen-atr e1) ")")]
+   [(epow e1 e2) (string-append "( ^ " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")] 
    [(mod e1 e2)  (string-append "( mod " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(lt e1 e2)   (string-append "( < " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(bt e1 e2)   (string-append "( > " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(lte e1 e2)  (string-append "( <= " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(bte e1 e2)  (string-append "( >= " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(eeq e1 e2)  (string-append "( = " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
+   [(diff e1 e2)  (string-append "(distinct " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")] 
    [(eand e1 e2) (string-append "( and " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(eor e1 e2)  (string-append "( or " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(enot e1) (string-append "( not " (eval-expr-gen-atr e1) ")")]
@@ -93,14 +95,14 @@
                              [new-str-z (gen-econds-node z new-str-y )])
                               new-str-z)]))
 
-(define (gen-text-each-element-list node-x node-z str str-assign ast nexec hasht)
+(define (gen-text-each-element-list node-x node str str-assign ast nexec hasht)
   (cond
-    [(equal? node-z '()) (let
-                         ([new-hasht (build-text-script (string-append str-assign " (assert (and (not " node-x ") " str "(not " node-z ")))") ast nexec hasht)])
+    [(equal? node '()) (let
+                         ([new-hasht (build-text-script (string-append str-assign " (assert (and  " node-x " " str "(not " node ")))") ast nexec hasht)])
                           (cons new-hasht ""))]
     [else                (let*
-                         ([new-hasht (build-text-script (string-append str-assign  " (assert (and (not " node-x ") " str node-z "))") ast nexec hasht)]
-                          [new-str (string-append str "(not "  node-z ")")])
+                         ([new-hasht (build-text-script (string-append str-assign  " (assert (and " node-x " " str node "))") ast nexec hasht)]
+                          [new-str (string-append str "(not "  node ")")])
                           (cons new-hasht new-str))]))
 
 (define (build-list-econd-block node-x tree str str-assign ast nexec hasht)
@@ -115,54 +117,17 @@
                             ([pair-hasht-str (gen-text-each-element-list node-x (check-econd x) str str-assign ast nexec hasht)]
                              [new-str (cdr pair-hasht-str)]
                              [new-hasht (car pair-hasht-str)])
-                             (build-list-econd-block node-x z new-str str-assign ast nexec new-hasht))]))
-
-#;(define (build-list-econd-block tree )
-  (match tree
-    ['() '()]
-    [(list (tree-econds x '() '())) (list (check-econd x ))]
-    [(tree-econds x '() '()) (list (check-econd x ))]
-    [(list (tree-econds x '() z))   (let*
-                             ([elem-x (check-econd x )]
-                             [elem-z (append-map (lambda (st) (build-list-econd-block st )) z)])
-                             (append 
-                                (list elem-x)
-                                (map (lambda (f) (string-append "(not " elem-x ")" f)) elem-z)))]
-      [(tree-econds x '() z)   (let*
-                             ([elem-x (check-econd x )]
-                             [elem-z (append-map (lambda (st) (build-list-econd-block st )) z)])
-                             (append 
-                                (list elem-x)
-                                (map (lambda (f) (string-append "(not " elem-x ")" f)) elem-z)))]
-    
-     [(list (tree-econds x y '()))   (let*
-                             ([elem-x (check-econd x )]
-                             [elem-y (append-map (lambda (st) (build-list-econd-block st )) y)])
-                             (append 
-                                (list elem-x)
-                                (map (lambda (f) (string-append "(not " elem-x ")" f)) elem-y)))]
-      [(tree-econds x y '())   (let*
-                             ([elem-x (check-econd x )]
-                             [elem-y (append-map (lambda (st) (build-list-econd-block st )) y)])
-                             (append 
-                                (list elem-x)
-                                (map (lambda (f) (string-append "(not " elem-x ")" f)) elem-y)))]
-    
-       [(list (tree-econds x y z)) (let*
-                             ([elem-x (check-econd x )]
-                             [elem-y (append-map (lambda (st) (build-list-econd-block st )) y)]
-                             [elem-z (append-map (lambda (st) (build-list-econd-block st )) z)])
-                             (append 
-                                (map (lambda (f) (string-append elem-x f)) elem-y)
-                                (map (lambda (f) (string-append "(not " elem-x ")" f)) elem-z)))]
-        [ (tree-econds x y z) (let*
-                             ([elem-x (check-econd x )]
-                             [elem-y (append-map (lambda (st) (build-list-econd-block st )) y)]
-                             [elem-z (append-map (lambda (st) (build-list-econd-block st )) z)])
-                             (append 
-                                (map (lambda (f) (string-append elem-x f)) elem-y)
-                                (map (lambda (f) (string-append "(not " elem-x ")" f)) elem-z)))]))
-
+                             (build-list-econd-block node-x z new-str str-assign ast nexec new-hasht))]
+    [(list (tree-econds x y '())) (let*
+                            ([pair-hasht-str (gen-text-each-element-list node-x (check-econd x) str str-assign ast nexec hasht)]
+                             [new-str (cdr pair-hasht-str)]
+                             [new-hasht (car pair-hasht-str)])
+                             (build-list-econd-block node-x y new-str str-assign ast nexec new-hasht))]
+    [(tree-econds x y '()) (let*
+                            ([pair-hasht-str (gen-text-each-element-list node-x (check-econd x) str str-assign ast nexec hasht)]
+                             [new-str (cdr pair-hasht-str)]
+                             [new-hasht (car pair-hasht-str)])
+                             (build-list-econd-block node-x y new-str str-assign ast nexec new-hasht))]))
 
 (define (build-script-path lista node-x str-assign ast nexec)
   (match lista
@@ -182,21 +147,19 @@
      [node-y (gen-econds-node y "" )]
      [node-z (gen-econds-node z "" )]
      [str-assign (get-assign ast "")]
-     [str-script-then-true (string-append
+     [str-script-false-y (string-append
                          str-assign
-                        " (assert (and " node-x " " node-y "))")]
-     [str-script-then-false (string-append
+                        " (assert (and "node-x " " (gen-econds-node-false y "" )  "))")]
+     [str-script-false-z (string-append
                          str-assign
-                        " (assert (and " node-x " " (gen-econds-node-false y "" ) "))")]
-     [str-script-else-false (string-append
-                         str-assign
-                        " (assert (and (not " node-x ") " (gen-econds-node-false z "" )  "))")])
-     (begin
-     (build-text-script str-script-then-true ast nexec)
-     (build-text-script str-script-then-false ast nexec)
-     (build-script-path (build-list-econd-block z ) node-x str-assign ast nexec)
-     (build-text-script str-script-else-false ast nexec))))
-
+                        " (assert (and (not " node-x ") " (gen-econds-node-false z "" )  "))")]
+   
+      [hasht1 (build-list-econd-block node-x y "" str-assign ast nexec (make-immutable-hash))]
+      [hasht2 (build-text-script str-script-false-y ast nexec hasht1)]
+      [hasht3 (build-list-econd-block (string-append "(not " node-x ")") z "" str-assign ast nexec hasht2)]
+      [hasht4 (build-text-script str-script-false-z ast nexec hasht3)])
+      hasht4))
+      
 (define (text-only-x-z x z ast nexec )
   (let*
     ([node-x (check-econd x )]
@@ -204,12 +167,13 @@
      [str-assign (get-assign ast "")]
      [str-script-true (string-append
                          str-assign
-                        " (assert " node-x ")")]
+                        " (assert " node-x ")"
+                        (verify-node-mod-div x))]
      [str-script-false-z (string-append
                          str-assign
                         " (assert (and (not " node-x ") " (gen-econds-node-false z "" )  "))")]
      [hasht1 (build-text-script str-script-true ast nexec (make-immutable-hash))]
-     [hasht2 (build-list-econd-block node-x z "" str-assign ast nexec hasht1)]
+     [hasht2 (build-list-econd-block (string-append "(not " node-x ")") z "" str-assign ast nexec hasht1)]
      [hasht3 (build-text-script str-script-false-z ast nexec hasht2)])
      hasht3))
 
@@ -218,17 +182,17 @@
     ([node-x (check-econd x )]
      [node-y (gen-econds-node y "" )]
      [str-assign (get-assign ast "")]
-     [str-script-true (string-append
+     [str-script-false-y (string-append
                          str-assign
-                        " (assert (and " node-x " " node-y "))"
-                          (verify-node-mod-div x))]
+                        " (assert (and "node-x " " (gen-econds-node-false y "" )  "))")]
      [str-script-false (string-append
                          str-assign
                         " (assert (not " node-x "))"
                           (verify-node-mod-div x))]
-      [hasht1 (build-text-script str-script-true ast nexec (make-immutable-hash))]
-      [hasht2 (build-text-script str-script-false ast nexec hasht1)])
-      hasht2))
+      [hasht1 (build-list-econd-block node-x y "" str-assign ast nexec (make-immutable-hash))]
+      [hasht2 (build-text-script str-script-false-y ast nexec hasht1)]
+      [hasht3 (build-text-script str-script-false ast nexec hasht2)])
+      hasht3))
 
 
 (define (text-only-x x ast nexec )

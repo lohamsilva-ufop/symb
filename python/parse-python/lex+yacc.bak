@@ -128,9 +128,9 @@
                          "assert"    "elif"      "from"      "lambda"    "return"   
                          "break"     "else"      "global"    "not"       "try"      
                          "class"     "except"    "if"        "or"        "while"    
-                         "continue"  "exec"      "import"    "pass"      "yield"    
+                         "continue"  "exec"      "pass"      "yield"    
                          "def"       "finally"   "in"        "print"
-                         "as" "cpyimport" "math.sqrt" "math"))
+                         "as" "cpyimport" "math.sqrt" "import" "math"))
    (binary-operator (:or #\+       #\-       #\*       "**"      #\/       "//"      #\%
                          "<<"      ">>"      #\&       #\|       #\^       #\~
                          #\<       #\>       "<="      ">="      "=="      "!="      "<>"))
@@ -511,8 +511,8 @@
   (define-empty-tokens et
     (!= % %= & &= |(| |)| * ** **= *= + += |,| - -= |.| / // //= /= : |;|
      < << <<= <= <> = == > >= >> >>= |[| |]| ^ ^= |`| and as assert break class 
-     continue def del elif else except exec finally for from global if import   cpyimport
-     in is lambda not or pass print math.sqrt math raise return try while yield |{| \| \|= |}| ~ EOF))
+     continue def del elif else except exec finally for from global if import cpyimport
+     in is lambda not or pass print math.sqrt raise return try while math yield |{| \| \|= |}| ~ EOF))
   (define p
     (parser
      (start start); single_input)
@@ -565,12 +565,11 @@
        ((small_stmt |;| simple_stmt) (flatten (cons $1 $3))))
       (small_stmt
        ((expr_stmt) $1)
-       ((sqrt_stmt) $1)
-       ((print_stmt) $1))
+       ((print_stmt) $1)
       ; ((del_stmt) $1)
       ; ((pass_stmt) $1)
       ; ((flow_stmt) $1)
-      ; ((import_stmt) $1)
+       ((import_stmt) $1))
       ; ((cpy-import_stmt) $1)
       ; ((global_stmt)
       ;  (instantiate global% ((reverse $1)) (start-pos $1-start-pos) (end-pos $1-end-pos)))
@@ -597,18 +596,15 @@
                  ((**=) '**=)
                  ((//=) '//=))
       ;; For normal assignments, additional restrictions enforced by the interpreter
-      (sqrt_stmt ((math.sqrt \( atom \))
-                   (esqrt $3)))
-      (print_stmt ((print test_list)
-                   (sprint $2))
+      (print_stmt ((print |(| test_list |)|)
+                   (sprint $3))
                   ((print >> test_list)
                    (sprint $3)))
       (test_list ;(() null) o que fazer? 
                  ((test) (list $1))
                  ((test |,| test_list) (cons $1 $3)))
-      (import_stmt ((import math)
-                    ("")))
-                    
+      
+       (import_stmt ((import math) '()))          
 
       
       #;(del_stmt ((del target_tuple_or_expr)
@@ -700,9 +696,9 @@
                ((if test : suite else : suite) (list (eif $2 $4 $7)))
                ((if test : suite elif_list else : suite) (list (eif $2 $4 $5))))
       (elif_list (() null)
-                 ((elif test : suite else : suite) (eif $2 $4 $7))
-                 ((elif test : suite elif_list) (eif $2 $4 $5)) 
-                 ((elif_list elif test : suite) (eif $3 $5 $1)))
+                 ((elif test : suite else : suite) (list (eif $2 $4 $7)))
+                 ((elif test : suite elif_list) (list (eif $2 $4 $5))) 
+                 ((elif_list elif test : suite) (list (eif $3 $5 $1))))
       #;(while_stmt ((while test : suite)
                    (instantiate while% ($2 $4 #f)
                      (start-pos $1-start-pos)
@@ -795,6 +791,8 @@
              (divv $1 $3))
             ((term % factor)
              (mod $1 $3))
+            ((math.sqrt |(| term |)|)
+                   (esqrt $3))
             #;((term % factor)
              (make-object binary% $1 '% $3 $1-start-pos $3-end-pos))
             #;((term // factor)

@@ -130,7 +130,7 @@
                          "class"     "except"    "if"        "or"        "while"    
                          "continue"  "exec"      "pass"      "yield"    
                          "def"       "finally"   "in"        "print"
-                         "as" "cpyimport" "math.sqrt" "import" "math"))
+                         "as" "cpyimport" "math.sqrt" "pow" "import" "math"))
    (binary-operator (:or #\+       #\-       #\*       "**"      #\/       "//"      #\%
                          "<<"      ">>"      #\&       #\|       #\^       #\~
                          #\<       #\>       "<="      ">="      "=="      "!="      "<>"))
@@ -512,7 +512,7 @@
     (!= % %= & &= |(| |)| * ** **= *= + += |,| - -= |.| / // //= /= : |;|
      < << <<= <= <> = == > >= >> >>= |[| |]| ^ ^= |`| and as assert break class 
      continue def del elif else except exec finally for from global if import cpyimport
-     in is lambda not or pass print math.sqrt raise return try while math yield |{| \| \|= |}| ~ EOF))
+     in is lambda not or pass print math.sqrt pow raise return try while math yield |{| \| \|= |}| ~ EOF))
   (define p
     (parser
      (start start); single_input)
@@ -696,9 +696,9 @@
                ((if test : suite else : suite) (list (eif $2 $4 $7)))
                ((if test : suite elif_list else : suite) (list (eif $2 $4 $5))))
       (elif_list (() null)
-                 ((elif test : suite else : suite) (eif $2 $4 $7))
-                 ((elif test : suite elif_list) (eif $2 $4 $5)) 
-                 ((elif_list elif test : suite) (eif $3 $5 $1)))
+                 ((elif test : suite else : suite) (list (eif $2 $4 $7)))
+                 ((elif test : suite elif_list) (list (eif $2 $4 $5))) 
+                 ((elif_list elif test : suite) (list (eif $3 $5 $1))))
       #;(while_stmt ((while test : suite)
                    (instantiate while% ($2 $4 #f)
                      (start-pos $1-start-pos)
@@ -732,7 +732,7 @@
              ((NEWLINE INDENT stmt_list_plus DEDENT)
                $3))
       (stmt_list_plus ((stmt) $1)
-                      ((stmt_list_plus stmt) (append $2 $1)))      
+                      ((stmt_list_plus stmt) (append $1 $2)))      
       
       (test ((or_test) $1)
             [(or_test if or_test else test) (list $1 $3 $5)
@@ -793,6 +793,8 @@
              (mod $1 $3))
             ((math.sqrt |(| term |)|)
                    (esqrt $3))
+            ((pow |(| term |,| term |)|)
+                   (epow $3 $5))
             #;((term % factor)
              (make-object binary% $1 '% $3 $1-start-pos $3-end-pos))
             #;((term // factor)

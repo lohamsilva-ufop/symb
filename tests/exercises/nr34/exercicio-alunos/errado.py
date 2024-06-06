@@ -1,0 +1,23 @@
+#34) Criar um programa que receba o valor de x, e calcule e imprima o valor de f(x). 
+#f(x) = 8/2-x
+
+x = input("Insira o valor de x: ")
+
+if x < 10:
+    if x == 11:
+        print ("Igual a 11")
+    elif x == 13:
+        print ("Igual a 13")
+    elif x == 15:
+        print ("Igual a 15")
+    else:
+        print ("Fora do escopo maior que 10")
+else:
+    if x == 9:
+        print ("Igual a 9")
+    elif x == 7:
+        print ("Igual a 7")
+    elif x == 5:
+        print ("Igual a 5")
+    else:
+        print ("Fora do escopo menor que 10")
