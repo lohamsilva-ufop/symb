@@ -1,0 +1,23 @@
+#38) Construa um programa para determinar a situação
+#(APROVADO/EXAME/REPROVADO) de um aluno, dado a sua freqüência (FREQ)
+#(porcentagem de 0 a 100%) e sua nota (NOTA) (nota de 0.0 a 10.0), sendo que: 
+
+#Condição Situação
+#Freqüência até 75% Reprovado
+#Freqüência entre 75% e 100% e Nota até 3.0 Reprovado
+#Freqüência entre 75% e 100% e Nota de 3.0 até 7.0 Exame
+#Freqüência entre 75% e 100% e Nota entre 7.0 e 10.0 Aprovado 
+
+freq = input("Digite a frequencia do aluno: ")
+nota = input("Digite a nota do aluno: ")
+
+if freq < 75 and freq <= 100:
+    if nota < 3 :
+        print ("Reprovado")
+    elif nota >= 3 and nota < 7 :
+        print ("Exame")
+    elif nota >= 7 and nota <= 10 :
+        print ("Aprovado")
+else:
+    if freq < 75 :
+        print ("Reprovado")
