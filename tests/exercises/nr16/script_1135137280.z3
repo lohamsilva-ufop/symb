@@ -1,0 +1,1 @@
+(declare-const A Int) (declare-const B Int) (declare-const C Int)  (assert (and (not (and ( and ( > A B) ( > A C))  ( > B C))) (not (and ( and ( > A B) ( > A C))  ( > C B)))(not (and ( and ( > B A) ( > B C))  ( > A C)))(and ( and ( > B A) ( > B C))  ( > C A))))(check-sat) (get-model)

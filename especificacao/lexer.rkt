@@ -8,6 +8,7 @@
 (define-empty-tokens syntax-tokens
   (EOF
    QTEXEC
+   QTDREP
    COLON
    GABARITO
    EXERCICIOS
@@ -21,6 +22,7 @@
    [(:+ #\newline whitespace)
     (return-without-pos (next-token input-port))]
    ["quantidade-execucoes" (token-QTEXEC)]
+   ["quantidade-repeticoes" (token-QTDREP)]
    [":" (token-COLON)]
    ["gabarito"  (token-GABARITO)]
    ["dir-aluno-exercicios" (token-EXERCICIOS)]

@@ -14,16 +14,16 @@
       (displayln "O exercício está correto. ")
       (displayln "O exercício está incorreto. ")))
 
-(define (percorre-path-student path list-files-path nexc table-inputs list-outs-gab)
+(define (percorre-path-student path list-files-path nexc table-inputs list-outs-gab  qtd-rep)
   (match list-files-path
     ['() (begin
            (displayln "Correção Finalizada. ")
             table-inputs)]
     [(cons f rest)
      (if (string-suffix? (~a f) ".bak")
-         (percorre-path-student path rest nexc table-inputs list-outs-gab)  
+         (percorre-path-student path rest nexc table-inputs list-outs-gab qtd-rep)  
        (let* ([path-file (string-append path "/" (~a f))]
-             [pair-ex-student (control-execute-students nexc path-file table-inputs)])
+             [pair-ex-student (control-execute-students nexc path-file table-inputs  qtd-rep)])
        (begin
         (display "Arquivo: ")
         (displayln f)
@@ -34,38 +34,48 @@
         (display "Correção: ")
         (correction list-outs-gab (cdr pair-ex-student))
         (displayln "===========================================")
-        (percorre-path-student path rest nexc (car pair-ex-student) list-outs-gab))))]))
+        (percorre-path-student path rest nexc (car pair-ex-student) list-outs-gab qtd-rep))))]))
 
-(define (control-execute-students nexec path-exercise table-inputs)
+(define (control-execute-students nexec path-exercise table-inputs qtd-rep)
   (let ([ast  (build-ast-from-file path-exercise)]
-        [iteration (length (car (hash-values table-inputs)))])
-     
-      (imp-interp ast iteration table-inputs table-inputs '())))
+         [iteration (if (equal?  (hash-values table-inputs) '())
+                      -1
+                      (length (car (hash-values table-inputs))))])
+       (if (equal? iteration -1)
+       (imp-interp ast nexec table-inputs table-inputs '() qtd-rep)    
+       (imp-interp ast iteration table-inputs table-inputs '() qtd-rep))))
 
-(define (execute-gab nexec path-gabarito)
+(define (execute-gab nexec path-gabarito qtd-rep)
   (let*
       ([ast  (build-ast-from-file path-gabarito)]
        [get-tree-econds (get-eifs ast)]
        [table (execute-gen-script-econds ast get-tree-econds "" nexec (make-immutable-hash))]
        [table-inputs (consolidade-table table)]
-       [iteration (length (car (hash-values table-inputs)))])
-      (imp-interp ast iteration table-inputs table-inputs '())))
+       [iteration (if (equal?  (hash-values table-inputs) '())
+                      -1
+                      (length (car (hash-values table-inputs))))])
+       (if (equal? iteration -1)
+       (imp-interp ast nexec table-inputs table-inputs '() qtd-rep)    
+       (imp-interp ast iteration table-inputs table-inputs '() qtd-rep))))
 
 (define (execution-controller cfg)
   (match cfg
-   [(config numero-execucoes gabarito dir-aluno-exercicios)
+   [(config numero-execucoes gabarito dir-aluno-exercicios qtd-repeticoes)
        (let*
            ([nexec (value-value numero-execucoes)]
             [path-gab (value-value gabarito)]
             [path-alunos (value-value dir-aluno-exercicios)]
-            [pair-gab (execute-gab nexec path-gab)]
+            [qtd-rep (value-value qtd-repeticoes)]
+            [pair-gab (execute-gab nexec path-gab qtd-rep)]
             [table-inputs-gab (car pair-gab)]
             [list-outs-gab (cdr pair-gab)]
             [list-files-path (directory-list path-alunos)])
               (begin
-              (display "Tabela de entradas geradas pelo gabarito: ")
-              (displayln table-inputs-gab)
-              (displayln "")
-              (percorre-path-student path-alunos list-files-path nexec table-inputs-gab list-outs-gab)))]))
+              (if (hash-empty? table-inputs-gab)
+                  (displayln "")
+                  (begin (display "Tabela de entradas geradas pelo gabarito: ")
+                  (displayln table-inputs-gab)
+                  (displayln "")))
+              (percorre-path-student path-alunos list-files-path nexec table-inputs-gab list-outs-gab  qtd-rep)))]))
        
 (provide execution-controller)

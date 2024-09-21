@@ -130,7 +130,7 @@
                          "class"     "except"    "if"        "or"        "while"    
                          "continue"  "exec"      "pass"      "yield"    
                          "def"       "finally"   "in"        "print"
-                         "as" "cpyimport" "math.sqrt" "pow" "import" "math"))
+                         "as" "cpyimport" "math.sqrt" "range" "pow" "import" "math"))
    (binary-operator (:or #\+       #\-       #\*       "**"      #\/       "//"      #\%
                          "<<"      ">>"      #\&       #\|       #\^       #\~
                          #\<       #\>       "<="      ">="      "=="      "!="      "<>"))
@@ -512,7 +512,7 @@
     (!= % %= & &= |(| |)| * ** **= *= + += |,| - -= |.| / // //= /= : |;|
      < << <<= <= <> = == > >= >> >>= |[| |]| ^ ^= |`| and as assert break class 
      continue def del elif else except exec finally for from global if import cpyimport
-     in is lambda not or pass print math.sqrt pow raise return try while math yield |{| \| \|= |}| ~ EOF))
+     in is lambda not or pass print math.sqrt range pow raise return try while math yield |{| \| \|= |}| ~ EOF))
   (define p
     (parser
      (start start); single_input)
@@ -685,9 +685,9 @@
                     #;(make-object assert% $2 #f $1-start-pos $2-end-pos))
                    ((assert test |,| test)(list $2 $4)
                     #;(make-object assert% $2 $4 $1-start-pos $4-end-pos)))
-      (compound_stmt ((if_stmt) $1))
-                   ;  ((while_stmt) $1)
-                    ; ((for_stmt) $1)
+      (compound_stmt ((if_stmt) $1)
+                     ((while_stmt) $1)
+                     ((for_stmt) $1))
                     ; ((try_stmt) $1)
                     ; ((funcdef) $1)
                     ; ((classdef) $1))
@@ -699,6 +699,8 @@
                  ((elif test : suite else : suite) (list (eif $2 $4 $7)))
                  ((elif test : suite elif_list) (list (eif $2 $4 $5))) 
                  ((elif_list elif test : suite) (list (eif $3 $5 $1))))
+      (while_stmt ((while test : suite) (list (ewhile $2 $4))))
+                  
       #;(while_stmt ((while test : suite)
                    (instantiate while% ($2 $4 #f)
                      (start-pos $1-start-pos)
@@ -706,6 +708,15 @@
                   ((while test : suite else : suite)
                    (instantiate while% ($2 $4 $7)
                      (start-pos $1-start-pos) (end-pos $7-end-pos))))
+      
+       (for_stmt ((for init in range |(| term |)| : suite) (list (efor (evar $2)  $6 $9)))
+                 ((for init in range |(| term |,| term |)| : suite) (list (efor (eassign $2 $6) $8 $11))))
+
+       (init ((ident) (evar $1)))
+
+       (serie ((range |(| term |)|) $3)
+              ((range |(| term |,| term |)|) $3))
+                
       #;(for_stmt ((for target_tuple_or_expr in tuple_or_test : suite)
                  (instantiate for% ($2 $4 $6 #f) (start-pos $1-start-pos) (end-pos $6-end-pos)))
                 ((for target_tuple_or_expr in tuple_or_test : suite else : suite)
@@ -877,9 +888,9 @@
       (testlist ((test |,|) (list $1))
                 ((test |,| test) (list $1 $3))
                 ((test |,| testlist) (cons $1 $3)))
-      #;(target_tuple_or_expr ((target_tuple) $1)
+      (target_tuple_or_expr ((target_tuple) $1)
                             ((expr) $1))
-      #;(target_tuple ((exprlist) (make-object tuple% $1 $1-start-pos $1-end-pos)))
+      (target_tuple ((exprlist) $1 #;(make-object tuple% $1 $1-start-pos $1-end-pos)))
       
       #;(dictmaker ((test : test) `((,$1 ,$3)))
                  ((test : test |,|) `((,$1 ,$3)))

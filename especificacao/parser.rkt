@@ -20,7 +20,10 @@
     (statement
      [(QTEXEC COLON expr SEMI
        GABARITO COLON expr SEMI
-       EXERCICIOS COLON expr SEMI) (config $3 $7 $11)])
+       EXERCICIOS COLON expr SEMI
+       qtd-loop) (config $3 $7 $11 $13)])
+    (qtd-loop  [(QTDREP COLON expr SEMI) $3]
+               [() (value -1)])
     (expr  [(NUMBER) (value $1)]
            [(STRING) (value $1)]))))
 
