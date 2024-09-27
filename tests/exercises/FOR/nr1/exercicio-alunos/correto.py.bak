@@ -1,0 +1,6 @@
+
+Si = 7
+
+while Si > 0:
+    Si = Si - 1
+    print("Ola")

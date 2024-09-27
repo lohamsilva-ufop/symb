@@ -10,6 +10,7 @@
     [(cons (eassign v e1) astrest) (get-eifs astrest)]
     [(cons (sprint e1) astrest) (get-eifs astrest)]
     [(cons (input e1) astrest) (get-eifs astrest)]
+    [(cons (input-with-type t e1) astrest) (get-eifs astrest)]
     [(cons (efor init stop block) astrest) (get-eifs block)]
     [(cons (ewhile expr block) astrest) (get-eifs block)]
     [(cons (eif econd then-block else-block) astrest)  (let* ([tr (get-eifs then-block)]

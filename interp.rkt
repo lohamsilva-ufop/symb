@@ -29,39 +29,48 @@
     [(eassign v e1) (eval-stmt env init table list-out qtd-rep)]
     [(evar e1) (if (hash-has-key? env (evar-id e1))
                    (cons env (cons table list-out))
-                   (eval-stmt env (eassign init (value 0)) table list-out qtd-rep))]))
+                   (eval-stmt env (eassign init (value 0)) table list-out qtd-rep))]
+    [(cons e v) (eval-init env e table list-out qtd-rep)]))
+
+(define (return-step env init)
+  (match init
+    [(eassign v e1) 1]
+    [(evar e1) 1]
+    [(cons e v) (eval-expr env v)]))
                    
 (define (return-evar ev)
   (match ev
     [(eassign v e1) v]
-    [(evar v) ev]))
+    [(evar v) ev]
+    [(cons e v) (return-evar e)]))
 
-(define (execute-for block init-ev stop env table list-out)
+(define (execute-for block init-ev stop step env table list-out)
   (if (equal? stop (search-value env init-ev))
       (cons env (cons table list-out)) 
         (let* ([triple (eval-stmts env block table list-out stop)]
              [nenv1 (car triple)]
              [comp  (cdr triple)]
-             [newtable (car comp)] ;rever
+             [newtable (car comp)] 
              [newlist (cdr comp)]
              [value-init (search-value nenv1 init-ev)]
-             [new-value-init (+ value-init 1)]
+             [new-value-init (+ value-init step)]
              [new-triple (eval-assign nenv1 init-ev (value new-value-init) newtable newlist)]
              [nenv2 (car new-triple)]
              [comp2 (cdr new-triple)]
-             [newtable2 (car comp2)] ;rever
+             [newtable2 (car comp2)] 
              [newlist2 (cdr comp2)])
-        (execute-for block init-ev stop nenv2 newtable2 newlist2))))
+        (execute-for block init-ev stop step nenv2 newtable2 newlist2))))
 
 (define (eval-for env init expr block table list-out qtd-rep)
   (let* ([value-init (eval-init env init table list-out qtd-rep)]
          [nenv (car value-init)]
          [init-ev (return-evar init)]
-         [stop (eval-expr env expr)])
+         [stop (eval-expr env expr)]
+         [step (return-step env init)])
     
     (if (> qtd-rep 0)
-        (execute-for block init-ev qtd-rep nenv table list-out)
-        (execute-for block init-ev stop nenv table list-out))))
+        (execute-for block init-ev qtd-rep step nenv table list-out)
+        (execute-for block init-ev stop step nenv table list-out))))
 
 (define (execute-ewhile-with-limitation env expr block table list-out qtd-rep)
   (if (equal? qtd-rep 0)
@@ -120,13 +129,16 @@
    [(value val) val]))
 
 (define (eval-stmt env s table list-out qtd-rep)
+  ;(displayln s)
   (match s
     [(eassign v e1) (eval-assign env v e1 table list-out)]
+    [(type-and-eassign t v e1) (eval-assign env v e1 table list-out)]
     [(sprint e1)
      (let* ([v (eval-expr env e1)]
             [newlist (cons v list-out)])
           (cons env (cons table newlist)))]
     [(input v1) (read-value env v1 table list-out)]
+    [(input-with-type t v1) (read-value env v1 table list-out)]
     [(eif econd then-block else-block) (eval-if env econd then-block else-block table  list-out qtd-rep)]
     [(efor init expr block) (eval-for env init expr block table list-out qtd-rep)]
     [(ewhile expr block) (eval-ewhile env expr block table list-out qtd-rep)]))

@@ -33,6 +33,24 @@
    str-assign
    (string-append "(declare-const " (evar-id v) " Int) ")))
 
+(define (build-str-input-type t v str-assign)
+  (match t
+    [(value "int")  (string-append
+                       str-assign
+                     (string-append "(declare-const " (evar-id v) " Int) "))]
+
+    [(value "float")  (string-append
+                       str-assign
+                     (string-append "(declare-const " (evar-id v) " Real) "))]
+
+    [(value "double")  (string-append
+                       str-assign
+                     (string-append "(declare-const " (evar-id v) " Real) "))]
+
+     [(value "boolean")  (string-append
+                       str-assign
+                     (string-append "(declare-const " (evar-id v) " Boolean) "))]))
+
 (define (build-str-assign v e1 str-assign )
   (string-append
    str-assign
@@ -40,10 +58,12 @@
   "(assert (= " (evar-id v) " " (eval-expr-gen-atr e1) "))"
   (expr-div-node e1)))
 
+
 (define (get-assign ast str-assign )
    (match ast
     ['() str-assign]
     [(cons (input v1) astrest) (get-assign astrest (build-str-input v1 str-assign )  )]
+    [(cons (input-with-type t v1) astrest) (get-assign astrest (build-str-input-type t v1 str-assign )  )]
     [(cons (eassign v e1) astrest) (get-assign astrest (build-str-assign v e1 str-assign )  )]
     [(cons (sprint e1) astrest) (get-assign astrest str-assign)]
     [(cons (read-v v1) astrest) (get-assign astrest str-assign)]

@@ -6,6 +6,10 @@
   (id)
   #:transparent)
 
+(struct input-with-type
+  (type id)
+  #:transparent)
+
 (struct value
   (value)
   #:transparent)
@@ -87,6 +91,10 @@
 
 (struct eassign
   (var expr)
+  #:transparent)
+
+(struct type-and-eassign
+  (etype var expr)
   #:transparent)
 
 (struct sprint

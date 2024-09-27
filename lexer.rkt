@@ -38,6 +38,8 @@
    INPUT
    READ
    INT
+   FLOAT
+   DOUBLE
    BOOLEAN
    TRUE
    FALSE))
@@ -78,6 +80,8 @@
    ["input" (token-INPUT)]
    ["read" (token-READ)]
    ["int" (token-INT)]
+   ["float" (token-FLOAT)]
+   ["double" (token-DOUBLE)]
    ["boolean" (token-BOOLEAN)]
    ["true" (token-TRUE)]
    ["false" (token-FALSE)]
