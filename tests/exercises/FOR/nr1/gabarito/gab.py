@@ -8,6 +8,6 @@ t = float(input('Informe o instante de tempo (t): '))
 while t <= 0:
     t = float(input('Informe o instante de tempo (t): '))
 S = Si + v * t
-print(f'A posição final no tempo t = {t:.2f} será S = {S:.2f}')
+print("A posição final no tempo t = ", t ," será S = ", S)
 
 

@@ -7,6 +7,7 @@
 (require racket/date)
 
 (define (eval-expr-gen-atr e)
+ ; (displayln e)
   (match e
    [(add e1 e2)  (string-append "( + " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
    [(minus e1 e2)(string-append "( - " (eval-expr-gen-atr e1) " " (eval-expr-gen-atr e2) ")")]
@@ -58,6 +59,11 @@
   "(assert (= " (evar-id v) " " (eval-expr-gen-atr e1) "))"
   (expr-div-node e1)))
 
+(define (eval-init init str-assign)
+  (match init
+    [(eassign v e1) (build-str-assign v e1 str-assign)]
+    [(evar v) (build-str-assign v (value 0) str-assign)]
+    [(cons e v) (eval-init e str-assign)]))
 
 (define (get-assign ast str-assign )
    (match ast
@@ -67,7 +73,7 @@
     [(cons (eassign v e1) astrest) (get-assign astrest (build-str-assign v e1 str-assign )  )]
     [(cons (sprint e1) astrest) (get-assign astrest str-assign)]
     [(cons (read-v v1) astrest) (get-assign astrest str-assign)]
-    [(cons (efor init stop block) astrest) (get-assign astrest str-assign)]
+    [(cons (efor init stop block) astrest) (get-assign astrest (eval-init init str-assign))]
     [(cons (ewhile expr block) astrest) (get-assign astrest str-assign)]
     [(cons (eif econd then-block else-block) astrest) (get-assign astrest str-assign  )]
     [(eif econd then-block else-block) str-assign]))

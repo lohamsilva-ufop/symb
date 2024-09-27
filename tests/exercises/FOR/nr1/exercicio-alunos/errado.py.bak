@@ -1,7 +1,10 @@
-
-Si = 7
-
-while Si > 0:
-    Si = Si - 1
-    print("Ola")
-
+# entrada, forçando valor válido
+n = int(input("Digite um número: "))
+while n < 1:
+    print("Número inválido.")
+    n = int(input("Digite um número: "))
+# processsamento e saída, depois que a entrada é concluída
+i = 0
+while i <= n:
+    print(i)
+    i = i + 1
