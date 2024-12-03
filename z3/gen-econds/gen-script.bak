@@ -1,0 +1,18 @@
+#lang racket
+
+(require "definitions.rkt"
+         "gen-text-econds.rkt")
+
+(define (gen-script-eifs node ast nexec str-assert)
+  (match node
+    ['() '()]
+    [ (tree-econds x y z) (gen-text x y z ast nexec str-assert)]))
+  
+(define (execute-gen-script-econds ast florest str nexec table)
+  (match florest
+    ['() table]
+    [(cons node rest) (let
+                        ([new-table (gen-script-eifs node ast nexec "")])
+                        (execute-gen-script-econds ast rest str nexec new-table))]))
+
+(provide (all-defined-out))

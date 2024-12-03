@@ -49,7 +49,7 @@
   (let*
       ([ast  (build-ast-from-file path-gabarito)]
        [get-tree-econds (get-eifs ast)]
-       [table (execute-gen-script-econds ast get-tree-econds "" nexec (make-immutable-hash))]
+       [table (execute-gen-script-econds ast get-tree-econds "" nexec (make-hash))]
        [table-inputs (consolidade-table table)]
        [iteration (if (equal?  (hash-values table-inputs) '())
                       -1
@@ -71,9 +71,11 @@
             [list-outs-gab (cdr pair-gab)]
             [list-files-path (directory-list path-alunos)])
               (begin
-              (display "Tabela de entradas geradas pelo gabarito: ")
-              (displayln table-inputs-gab)
-              (displayln "")
+              (if (hash-empty? table-inputs-gab)
+                  (displayln "")
+                  (begin (display "Tabela de entradas geradas pelo gabarito: ")
+                  (displayln table-inputs-gab)
+                  (displayln "")))
               (percorre-path-student path-alunos list-files-path nexec table-inputs-gab list-outs-gab  qtd-rep)))]))
        
 (provide execution-controller)

@@ -1,0 +1,1 @@
+(declare-const M14 Real) (declare-const A6 Int) (declare-const H Int) (declare-const M7 Int) (assert (= M7 ( + A6 ( / H 7))))(declare-const d Int) (assert (= d ( - M7 M14)))(declare-const Taxa Int) (assert (= Taxa ( * ( / d M14) 100))) (assert (< Taxa  0))(check-sat) (get-model)

@@ -1,0 +1,1 @@
+(declare-const qtd Int) (declare-const p Int) (assert (= p 0))(declare-const M Real) (declare-const FT Int) (assert (= FT ( * 0.3048 M)))(declare-const YD Int) (assert (= YD ( * 0.9144 M))) (assert (< p  qtd))(check-sat) (get-model)

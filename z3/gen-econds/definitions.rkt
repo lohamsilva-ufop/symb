@@ -7,7 +7,7 @@
 (define (return-expr init stop)
   (match init
     [(eassign v e1) (lt v stop)]
-    [(evar v) (lt v stop)]
+    [(evar v) (lt (evar v) stop)]
     [(cons e v) (return-expr e stop)]))
 
 (define (get-eifs ast)

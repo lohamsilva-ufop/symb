@@ -1,0 +1,1 @@
+a = int(input("Informe o cateto 1   (a): "))b = int(input("Informe o cateto 2   (b): "))c = int(input("Informe a hipotenusa (c): "))if a * 2 + b * 2 == c * 2:    print(a, c, b, "representam um terno pitagórico")else:    print(a, c, c, "NÃO representam um terno pitagórico")

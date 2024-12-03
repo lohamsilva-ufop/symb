@@ -1,10 +1,7 @@
 #lang racket
 
 (require "../../syntax.rkt"
-         "../../interp.rkt"
          "../gen-econds/gen-text-div-or-mod.rkt")
-
-(require racket/date)
 
 (define (eval-expr-gen-atr e)
  ; (displayln e)
@@ -28,11 +25,14 @@
    [(evar e1) (~a e1)]
    [(value val) (~a val)]))
 
-
-(define (build-str-input v str-assign )
-  (string-append
+(define (build-str-input v str-assign table-evars)
+   (if (hash-has-key? table-evars (evar-id v))
+       (cons "" table-evars)
+  (cons
+   (string-append
    str-assign
-   (string-append "(declare-const " (evar-id v) " Int) ")))
+   (string-append "(declare-const " (evar-id v) " Int) "))
+   (hash-set! table-evars (evar-id v) 0))))
 
 (define (build-str-input-type t v str-assign)
   (match t
@@ -52,30 +52,59 @@
                        str-assign
                      (string-append "(declare-const " (evar-id v) " Boolean) "))]))
 
-(define (build-str-assign v e1 str-assign )
+(define (build-str-assign v e1 str-assign table-evars)
+  (if (hash-has-key? table-evars (evar-id v))
+      (cons
+       (string-append
+        str-assign
+         "(assert (= " (evar-id v) " " (eval-expr-gen-atr e1) "))"
+        (expr-div-node e1))
+        table-evars)
+  (cons
   (string-append
    str-assign
    (string-append "(declare-const " (evar-id v) " Int) ")
   "(assert (= " (evar-id v) " " (eval-expr-gen-atr e1) "))"
-  (expr-div-node e1)))
+  (expr-div-node e1))
+   (let ([new-hash (hash-set table-evars (evar-id v) e1)])
+     new-hash))))
 
-(define (eval-init init str-assign)
+(define (eval-init init str-assign table-evars)
+  ;(displayln table-evars)
   (match init
-    [(eassign v e1) (build-str-assign v e1 str-assign)]
-    [(evar v) (build-str-assign v (value 0) str-assign)]
-    [(cons e v) (eval-init e str-assign)]))
+    [(eassign v e1) (build-str-assign v e1 str-assign table-evars)]
+    [(evar v) (build-str-assign (evar v) (value 0) str-assign table-evars)]
+    [(cons e v) (eval-init e str-assign table-evars)]))
 
-(define (get-assign ast str-assign )
+(define (get-assign ast str-assign table-evars)
    (match ast
-    ['() str-assign]
-    [(cons (input v1) astrest) (get-assign astrest (build-str-input v1 str-assign )  )]
-    [(cons (input-with-type t v1) astrest) (get-assign astrest (build-str-input-type t v1 str-assign )  )]
-    [(cons (eassign v e1) astrest) (get-assign astrest (build-str-assign v e1 str-assign )  )]
-    [(cons (sprint e1) astrest) (get-assign astrest str-assign)]
-    [(cons (read-v v1) astrest) (get-assign astrest str-assign)]
-    [(cons (efor init stop block) astrest) (get-assign astrest (eval-init init str-assign))]
-    [(cons (ewhile expr block) astrest) (get-assign astrest str-assign)]
-    [(cons (eif econd then-block else-block) astrest) (get-assign astrest str-assign  )]
+    ['() (cons str-assign table-evars)]
+    [(cons (input v1) astrest) (let*
+                                   ([new-result (build-str-input v1 str-assign table-evars)]
+                                    [new-str (car new-result)]
+                                    [new-table-evars (cdr new-result)])
+                                   (get-assign astrest new-str new-table-evars))]
+                                    
+    [(cons (input-with-type t v1) astrest) (get-assign astrest (build-str-input-type t v1 str-assign ) table-evars )]
+    [(cons (eassign v e1) astrest) (let*
+                                   ([new-result (build-str-assign v e1 str-assign table-evars)]
+                                    [new-str (car new-result)]
+                                    [new-table-evars (cdr new-result)])
+                                   (get-assign astrest new-str new-table-evars))]
+     
+    [(cons (sprint e1) astrest) (get-assign astrest str-assign table-evars) ]
+    [(cons (read-v v1) astrest) (get-assign astrest str-assign table-evars) ]
+    [(cons (efor init stop block) astrest) (let*
+                                              ([evalued-init (car (eval-init init "" table-evars))]
+                                               [new-result (get-assign block "" table-evars)]
+                                               [new-str (car new-result)]
+                                               [new-table-evars (cdr new-result)]
+                                               [new-str2 (string-append  str-assign evalued-init new-str)])
+                                               
+                                               (get-assign astrest new-str2 new-table-evars))]
+    ; (get-assign astrest (eval-init init str-assign)) table-evars]
+    [(cons (ewhile expr block) astrest) (get-assign astrest str-assign  table-evars)]
+    [(cons (eif econd then-block else-block) astrest) (get-assign astrest str-assign table-evars) ]
     [(eif econd then-block else-block) str-assign]))
 
 (provide (all-defined-out))

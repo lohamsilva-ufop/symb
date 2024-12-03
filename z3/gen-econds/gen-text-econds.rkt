@@ -98,7 +98,7 @@
 
 
 (define (gen-text-each-element-list node-x node str str-assign ast nexec hasht)
-  (displayln node-x)
+  ;(displayln node-x)
   (cond
     [(equal? node '()) (let
                          ([new-hasht (build-text-script (string-append str-assign " (assert (and  " node-x " " str "(not " node ")))") ast nexec hasht)])
@@ -181,7 +181,7 @@
     ([node-x (check-econd x )]
      [node-y (gen-econds-node y "" )]
      [node-z (gen-econds-node z "" )]
-     [str-assign (get-assign ast "")]
+     [str-assign (car (get-assign ast "" (make-immutable-hash)))]
      [str-script-false-y (string-append
                          str-assign
                         " (assert (and "node-x " " (gen-econds-node-false y "" )  "))")]
@@ -199,7 +199,7 @@
   (let*
     ([node-x (check-econd x )]
      [node-z (gen-econds-node z "" )]
-     [str-assign (get-assign ast "")]
+     [str-assign (car (get-assign ast "" (make-immutable-hash)))]
      [str-script-true (string-append
                          str-assign
                         " (assert " node-x ")"
@@ -216,7 +216,7 @@
   (let*
     ([node-x (check-econd x )]
      [node-y (gen-econds-node y "" )]
-     [str-assign (get-assign ast "")]
+     [str-assign (car (get-assign ast "" (make-immutable-hash)))]
      [str-script-false-y (string-append
                          str-assign
                         " (assert (and "node-x " " (gen-econds-node-false y "" )  "))")]
@@ -233,20 +233,24 @@
 (define (text-only-x x ast nexec )
 (let*
     ([node (check-econd x )]
-     [str-assign (get-assign ast "")]
+     [str-assign (car (get-assign ast "" (make-immutable-hash)))]
      [str-script-true (string-append
                          str-assign
+                        ; (return-define-const x)
                         " (assert " node ")"
                         (verify-node-mod-div x))]
      [str-script-false (string-append
                          str-assign
+                       ;  (return-define-const x)
                         " (assert (not " node "))"
                         (verify-node-mod-div x))]
      [hasht1 (build-text-script str-script-true ast nexec (make-immutable-hash))]
      [hasht2 (build-text-script str-script-false ast nexec hasht1)])
      hasht2))
+
+;(define (gen-text-asserts text)
   
-(define (gen-text x y z ast nexec)  
+(define (gen-text x y z ast nexec str-assert)  
   (cond
     [(and (equal? '() y) (equal? '() z))        (text-only-x x ast nexec)]
     [(and (not (equal? '() y)) (equal? '() z))  (text-only-x-y x y ast nexec )]

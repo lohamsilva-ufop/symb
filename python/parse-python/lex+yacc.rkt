@@ -720,7 +720,7 @@
                    (instantiate while% ($2 $4 $7)
                      (start-pos $1-start-pos) (end-pos $7-end-pos))))
       
-       (for_stmt ((for init in range |(| term |)| : suite) (list (efor (evar $2)  $6 $9)))
+       (for_stmt ((for init in range |(| term |)| : suite) (list (efor $2  $6 $9)))
                  ((for init in range |(| term |,| term |)| : suite) (list (efor (eassign $2 $6) $8 $11)))
                  ((for init in range |(| term |,| term  |,| term |)| : suite) (list (efor (cons (eassign $2 $6) $10) $8 $13))))
 

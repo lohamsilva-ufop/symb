@@ -7,6 +7,7 @@
           "gen-text-div-or-mod.rkt")
 
 (require racket/date)
+(require racket/hash)
 
 (define (create-script-file text-script)
    (let*  ([path-file (string->path (string-append "script_" (~a (random (date->seconds (current-date)))) ".z3"))]
@@ -95,7 +96,9 @@
                              [new-str-z (gen-econds-node z new-str-y )])
                               new-str-z)]))
 
+
 (define (gen-text-each-element-list node-x node str str-assign ast nexec hasht)
+  (displayln node-x)
   (cond
     [(equal? node '()) (let
                          ([new-hasht (build-text-script (string-append str-assign " (assert (and  " node-x " " str "(not " node ")))") ast nexec hasht)])
@@ -104,6 +107,11 @@
                          ([new-hasht (build-text-script (string-append str-assign  " (assert (and " node-x " " str node "))") ast nexec hasht)]
                           [new-str (string-append str "(not "  node ")")])
                           (cons new-hasht new-str))]))
+
+(define (return-x node)
+  (match node
+    [(tree-econds x y z) (check-econd x)]
+    [(list (tree-econds x y z)) (check-econd x)]))
 
 (define (build-list-econd-block node-x tree str str-assign ast nexec hasht)
   (match tree
@@ -127,9 +135,36 @@
                             ([pair-hasht-str (gen-text-each-element-list node-x (check-econd x) str str-assign ast nexec hasht)]
                              [new-str (cdr pair-hasht-str)]
                              [new-hasht (car pair-hasht-str)])
-                             (build-list-econd-block node-x y new-str str-assign ast nexec new-hasht))]))
+                             (build-list-econd-block node-x y new-str str-assign ast nexec new-hasht))]
+    [(list (tree-econds x y z)) (displayln z)(let
+                                  ([h1 (build-list-econd-block (check-econd x) y str str-assign ast nexec hasht)])
+                                 
+                                  
+                                   (build-list-econd-block (check-econd x) z str str-assign ast nexec h1)
 
-(define (build-script-path lista node-x str-assign ast nexec)
+
+                                    
+                         ) #;(let*
+                            ([pair-hasht-str (gen-text-each-element-list node-x (check-econd x) str str-assign ast nexec hasht)]
+                             [new-str (cdr pair-hasht-str)]
+                             [new-hasht (car pair-hasht-str)]
+                             [two-new-hasht (build-list-econd-block node-x y new-str str-assign ast nexec new-hasht)])
+                             (build-list-econd-block node-x z new-str str-assign ast nexec two-new-hasht))]
+    [(tree-econds x y z) #;(let
+                            
+                                  ([h1 (build-list-econd-block (check-econd x) y str str-assign ast nexec hasht)])
+                                   (build-list-econd-block (check-econd x) z str str-assign ast nexec h1))
+
+
+                                    
+                         (let*
+                            ([pair-hasht-str (gen-text-each-element-list node-x (check-econd x) str str-assign ast nexec hasht)]
+                             [new-str (cdr pair-hasht-str)]
+                             [new-hasht (car pair-hasht-str)]
+                             [two-new-hasht (build-list-econd-block node-x y new-str str-assign ast nexec new-hasht)])
+                             (build-list-econd-block node-x z new-str str-assign ast nexec two-new-hasht))]))
+
+(define (build-script-path lista node-x str-assign ast)
   (match lista
     ['() '()]
     [(cons li rest) (begin
@@ -137,8 +172,8 @@
                          ([str-script (string-append
                                        str-assign
                                       " (assert (and (not " node-x ") " li "))")])
-                       (build-text-script str-script ast nexec))
-                     (build-script-path rest node-x str-assign ast nexec))]))
+                       (build-text-script str-script ast))
+                     (build-script-path rest node-x str-assign ast))]))
 
 
 (define (text-x-y-z x y z ast nexec )
@@ -156,7 +191,7 @@
    
       [hasht1 (build-list-econd-block node-x y "" str-assign ast nexec (make-immutable-hash))]
       [hasht2 (build-text-script str-script-false-y ast nexec hasht1)]
-      [hasht3 (build-list-econd-block (string-append "(not " node-x ")") z "" str-assign ast nexec hasht2)]
+      [hasht3 (build-list-econd-block node-x z "" str-assign ast nexec hasht2)]
       [hasht4 (build-text-script str-script-false-z ast nexec hasht3)])
       hasht4))
       
@@ -211,7 +246,7 @@
      [hasht2 (build-text-script str-script-false ast nexec hasht1)])
      hasht2))
   
-(define (gen-text x y z ast nexec)  
+(define (gen-text x y z ast nexec str-assert)  
   (cond
     [(and (equal? '() y) (equal? '() z))        (text-only-x x ast nexec)]
     [(and (not (equal? '() y)) (equal? '() z))  (text-only-x-y x y ast nexec )]

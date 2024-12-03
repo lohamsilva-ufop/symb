@@ -6,6 +6,7 @@
    (cons nenv (cons table  list-out))))
 
 (define (search-value env v)
+  (displayln env)
   (let ([value (hash-ref env (evar-id v))]) value))
 
 (define (read-value env v1 table list-out)

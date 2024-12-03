@@ -2,10 +2,12 @@
 
 (require "syntax.rkt")
 (define (eval-assign env v e table  list-out)
+  ;(displayln v)
    (let ([nenv (hash-set env (evar-id v) (eval-expr env e))])
    (cons nenv (cons table  list-out))))
 
 (define (search-value env v)
+ ; (displayln v)
   (let ([value (hash-ref env (evar-id v))]) value))
 
 (define (read-value env v1 table list-out)
@@ -26,8 +28,8 @@
 
 (define (eval-init env init table list-out qtd-rep)
   (match init
-    [(eassign v e1) (eval-stmt env init table list-out qtd-rep)]
-    [(evar e1) (if (hash-has-key? env (evar-id e1))
+    [(eassign v e1) (eval-stmt env v init table list-out qtd-rep)]
+    [(evar e1) (if (hash-has-key? env e1)
                    (cons env (cons table list-out))
                    (eval-stmt env (eassign init (value 0)) table list-out qtd-rep))]
     [(cons e v) (eval-init env e table list-out qtd-rep)]))
@@ -144,6 +146,7 @@
     [(ewhile expr block) (eval-ewhile env expr block table list-out qtd-rep)]))
 
 (define (eval-stmts env blk table list-out qtd-rep)
+  ;(displayln blk)
   (match blk
     ['() (cons env (cons table list-out))]                                   
     [(cons s blks) (begin
